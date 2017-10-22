@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>OnePunch</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../style/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="../style/style.css">
+</head>
+
+<body>
+    <div id="menuBar" class="ui buttons fluid">
+        <button value="homeTab" class="tabControl ui button large active" id="homeBtn">Home</button>
+        <button value="settingsTab" class="tabControl ui button large" id="settingsBtn">Settings</button>
+    </div>
+    <div id="homeTab" class="tabContent ui grid middle aligned centered">
+        <div class="twelve wide column">
+            <img class="ui centered image" src="../images/owl_ico_128.png" alt="One Punch Icon" style="padding: 20px 0px 10px 0px;">
+        </div>
+        <div class="twelve wide column">
+            <button id="logBtn" class="fluid ui green button">Log!</button>
+        </div>
+        <div class="twelve wide column">
+            <button id="moveLocalBtn" class="fluid ui purple button">Move local logs to shared drive</button>
+        </div>
+        <div class="fourteen wide column">
+            <p style="text-align: center">v. 0.1.0<br><br>Icons made by Freepik.com from www.flaticon.com<br>and licensed by CC 3.0 BY<br>Built with Electron</p>
+        </div>
+    </div>
+    <div id="settingsTab" class="tabContent ui grid middle aligned centered" style="display:none;">
+        <div class="sixteen wide column">
+            <h2>Log Folder</h2>
+        </div>
+        <div class="twelve wide column">
+            <span id="logFolderName">Choose a folder...</span>
+        </div>
+        <div class="twelve wide column">
+            <button id="logPicker" class="ui primary button fluid">Choose</button>
+        </div>
+        <input id="logPath" type="hidden" name="userSetting" value="">
+        <div class="sixteen wide column">
+            <h2>Local Folder</h2>
+        </div>
+        <div class="twelve wide column">
+            <span id="localLogFolderName">Choose a folder...</span>
+        </div>
+        <div class="twelve wide column">
+            <button id="localLogPicker" class="ui primary button fluid">Choose</button>
+        </div>
+        <input id="localLogPath" type="hidden" name="userSetting" value="">
+        <div class="sixteen wide column">
+            <h2>HotKey</h2>
+        </div>
+        <div class="twelve wide column">
+            <div class="field">
+                <input type="radio" name="hotKey" value="F9" id="F9" class="ui radio checkbox" checked>
+                <label for="F9">F9</label>
+            </div>
+            <div class="field">
+                <input type="radio" name="hotKey" value="Ctrl+F9" id="ctrlF9" class="ui radio checkbox">
+                <label for="ctrlF9">Ctrl + F9</label>
+            </div>
+            <div class="field">
+                <input type="radio" name="hotKey" value="Ctrl+Alt+F9" id="ctrlAltF9" class="ui radio checkbox">
+                <label for="ctrlAltF9">Ctrl + Alt + F9</label>
+            </div>
+        </div>
+        <div class="sixteen wide column">
+            <h2>Desk</h2>
+        </div>
+        <div class="twelve wide column">
+            <div class="ui input large">
+                <input id="deskPicker" class="ui input large" name="userSetting" type="text" placeholder="Enter desk name" />
+            </div>
+        </div>
+        <div class="twelve wide column">
+            <button id="saveBtn" class="fluid ui blue button">Save</button>
+        </div>
+    </div>
+    <script>
+        require('../index.js');
+
+    </script>
+</body>
+
+</html>
