@@ -4,8 +4,10 @@
 <head>
     <title>OnePunch</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="../style/semantic.min.css">
+
+    <link rel="stylesheet" type="text/css" href="../style/pikaday.css">
     <link rel="stylesheet" type="text/css" href="../style/style.css">
+    <link rel="stylesheet" type="text/css" href="../style/semantic.min.css">
 </head>
 
 <body>
@@ -29,6 +31,29 @@
         </div>
     </div>
     <div id="reportsTab" class="tabContent ui grid middle aligned centered" style="display:none;">
+
+
+                <div class="ui slider checkbox twelve wide column">
+            <input class="datepicker ui input" type="text" id="startDate" placeholder="Pick start date" />
+        </div>
+
+                <div class="ui slider checkbox twelve wide column">
+            <input class="datepicker" type="text" id="endDate" placeholder="Pick end date" />
+        </div>
+
+
+
+
+
+
+        <div class="ui slider checkbox twelve wide column">
+            <input id="deskCheck" type="checkbox" name="details" checked>
+            <label>Detail By Desk</label>
+        </div>
+        <div class="ui slider checkbox twelve wide column">
+            <input id="hourCheck" type="checkbox" name="details">
+            <label>Detail By Hour</label>
+        </div>
         <div class="twelve wide column">
             <button id="generateReportBtn" class="fluid ui purple button">Generate Report</button>
         </div>
@@ -75,7 +100,9 @@
         </div>
     </div>
     <script>
-        require('../index.js');
+        require('../index.js')
+
+    </script>
 
     </script>
 </body>

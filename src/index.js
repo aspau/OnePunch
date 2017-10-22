@@ -5,6 +5,7 @@ const Reports = require("./scripts/reporting");
 const SettingsScript = require("./scripts/settings_script");
 const AddLogLocations = require("./scripts/addLogLocations");
 const FileDialog = require("./scripts/getFileDialog");
+const Pikaday = require("./scripts/pikaday");
 
 const {
     globalShortcut
@@ -53,19 +54,30 @@ SettingsScript.getSetting().then(function (returnedSettings) {
         }
     });
     document.getElementById("currentHotKey").value = hotKey;
-    document.getElementById("logBtn").addEventListener("click", function () {
-        LogText.logText();
-    });
-    document.getElementById("moveLocalBtn").addEventListener("click", function () {
-        MoveLocalText.moveText();
-    });
-    document.getElementById("generateReportBtn").addEventListener("click", function () {
-        //Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailbyHour, savePath);
-        Reports.generateTestReport(false, false);
-    });
+});
 
-    // check for local logs and try moving them to network file
+
+document.getElementById("logBtn").addEventListener("click", function () {
+    LogText.logText();
+});
+document.getElementById("moveLocalBtn").addEventListener("click", function () {
     MoveLocalText.moveText();
+});
+document.getElementById("generateReportBtn").addEventListener("click", function () {
+    //Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailbyHour, savePath);
+    let showDetailByDesk = document.getElementById("deskCheck").checked;
+    let showDetailbyHour = document.getElementById("hourCheck").checked;
+    Reports.generateTestReport(showDetailByDesk, showDetailbyHour);
+});
+
+MoveLocalText.moveText();
+
+var startPicker = new Pikaday({
+    field: document.getElementById('startDate')
+});
+
+var endPicker = new Pikaday({
+    field: document.getElementById('endDate')
 });
 
 // add listeners to page elements
