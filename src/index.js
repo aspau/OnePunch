@@ -13,7 +13,6 @@ const {
 // Function to add HotKey. Will be called after data loaded
 
 function setHotKey(hotKey) {
-    console.log("Registering... " + hotKey);
     globalShortcut.register(hotKey, () => {
         LogText.logText();
     });
@@ -49,7 +48,6 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     document.getElementById("logPath").value = logPath;
     document.getElementById('logFolderName').textContent = logPath;
     document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
-        console.log("Radio button is " + radioBtn.value + " and hotKey choice is " + hotKey);
         if (radioBtn.value === hotKey) {
             radioBtn.checked = true;;
         }
@@ -63,7 +61,7 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     });
     document.getElementById("generateReportBtn").addEventListener("click", function () {
         //Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailbyHour, savePath);
-        Reports.parseFileToObjects();
+        Reports.generateTestReport(false, false);
     });
 
     // check for local logs and try moving them to network file
@@ -93,7 +91,6 @@ document.getElementById("saveBtn").addEventListener("click", function () {
             }).then(function (settingSaved) {
                 return SettingsScript.saveSetting('hotKey', hotKeyChoice);
             }).then(function (settingSaved) {
-                console.log("Hot Key Choice is " + hotKeyChoice);
                 globalShortcut.unregister(currentHotKey);
                 setHotKey(hotKeyChoice);
             }).catch(function (error) {

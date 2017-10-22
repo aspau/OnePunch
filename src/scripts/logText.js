@@ -52,7 +52,6 @@ module.exports = {
                             function (err) {
                                 if (err) {
                                     SettingsScript.getSetting('localLogs').then(function (localLogs) {
-                                        console.log(localLogs);
                                         if (localLogs) {
                                             localLogs.push(logText);
                                             SettingsScript.saveSetting('localLogs', localLogs);
@@ -60,7 +59,6 @@ module.exports = {
                                             return logText;
                                         } else {
                                             localLogs = [];
-                                            console.log(localLogs);
                                             localLogs.push(logText);
                                             SettingsScript.saveSetting('localLogs', localLogs);
                                             WindowsNotifications.notify("Logged locally!", "Please connect to shared drive.", "exclamation_mark_64.png", 3500);
