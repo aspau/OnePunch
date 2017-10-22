@@ -4,10 +4,14 @@ const SettingsScript = require('./settings_script')
 //"Sun,10/22/2017,12:52,liam
 
 const self = module.exports = {
-    //parseFileToObjects: function (startDate, endDate) {
-    parseFileToObjects: function () {
+    parseFileToObjects: function (startDate, endDate) {
         return new Promise(function (resolve, reject) {
             SettingsScript.getSetting().then(function (returnedSettings) {
+                console.log("dates are " + startDate + " and " + endDate);
+                const jsStartDate = new Date(startDate);
+                const jsEndDate = new Date(endDate);
+                const offsetMs = jsEndDate.getTime() + (1000 * 60 * 60 * 24);
+                jsEndDate.setTime(offsetMs);
                 const logPath = returnedSettings.logPath.primary;
                 const secondaryLogPath = returnedSettings.logPath.secondary;
                 const primary = logPath + "\\op_log.txt";
@@ -32,7 +36,9 @@ const self = module.exports = {
                                     logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
                                     logObj.jsDate = new Date(logDateTimeString);
                                     logObj.hour = logObj.jsDate.getHours();
-                                    objectArray.push(logObj);
+                                    if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
+                                        objectArray.push(logObj);
+                                    }
                                     if (i == logArray.length - 2) {
                                         objectArray.sort(function (a, b) {
                                             return a.jsDate - b.jsDate;
@@ -55,7 +61,9 @@ const self = module.exports = {
                             logObj.jsDate = new Date(logDateTimeString);
                             logObj.hour = logObj.jsDate.getHours();
                             logObj.count = 1;
-                            objectArray.push(logObj);
+                            if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
+                                objectArray.push(logObj);
+                            }
                             if (i == logArray.length - 2) {
                                 objectArray.sort(function (a, b) {
                                     return a.jsDate - b.jsDate;
@@ -143,9 +151,9 @@ const self = module.exports = {
         });
     },
 
-    generateTestReport(showDetailByDesk, showDetailbyHour) {
+    generateTestReport(startDate, endDate, showDetailByDesk, showDetailbyHour) {
         return new Promise(function (resolve, reject) {
-            self.parseFileToObjects()
+            self.parseFileToObjects(startDate, endDate)
                 .then(function (objectArray) {
                     return self.processObjectsToTotals(objectArray, showDetailByDesk, showDetailbyHour)
                         .then(function (totalsArray) {

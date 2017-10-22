@@ -31,35 +31,33 @@
         </div>
     </div>
     <div id="reportsTab" class="tabContent ui grid middle aligned centered" style="display:none;">
-
-
-                <div class="ui slider checkbox twelve wide column">
-            <input class="datepicker ui input" type="text" id="startDate" placeholder="Pick start date" />
+        <div class="fourteen wide column">
+            <h2>Date Range</h2>
+            <p>(inclusive)</p>
         </div>
-
-                <div class="ui slider checkbox twelve wide column">
+        <div class="twelve wide column ui input large">
+            <input class="datepicker" type="text" id="startDate" placeholder="Pick start date" />
+        </div>
+        <div class="twelve wide column ui input large">
             <input class="datepicker" type="text" id="endDate" placeholder="Pick end date" />
         </div>
-
-
-
-
-
-
+        <div class="fourteen wide column">
+            <h2>Detail Level</h2>
+        </div>
         <div class="ui slider checkbox twelve wide column">
             <input id="deskCheck" type="checkbox" name="details" checked>
-            <label>Detail By Desk</label>
+            <label>By Desk</label>
         </div>
         <div class="ui slider checkbox twelve wide column">
             <input id="hourCheck" type="checkbox" name="details">
-            <label>Detail By Hour</label>
+            <label>By Hour</label>
         </div>
         <div class="twelve wide column">
             <button id="generateReportBtn" class="fluid ui purple button">Generate Report</button>
         </div>
     </div>
     <div id="settingsTab" class="tabContent ui grid middle aligned centered" style="display:none;">
-        <div class="sixteen wide column">
+        <div class="fourteen wide column">
             <h2>Log Folder</h2>
         </div>
         <div class="twelve wide column">
@@ -69,7 +67,7 @@
             <button id="logPicker" class="ui primary button fluid">Choose</button>
         </div>
         <input id="logPath" type="hidden" name="userSetting" value="">
-        <div class="sixteen wide column">
+        <div class="fourteen wide column">
             <h2>HotKey</h2>
         </div>
         <div class="twelve wide column">
@@ -87,7 +85,7 @@
             </div>
             <input id="currentHotKey" type="hidden" name="userSetting" value="">
         </div>
-        <div class="sixteen wide column">
+        <div class="fourteen wide column">
             <h2>Desk</h2>
         </div>
         <div class="twelve wide column">
@@ -101,8 +99,6 @@
     </div>
     <script>
         require('../index.js')
-
-    </script>
 
     </script>
 </body>

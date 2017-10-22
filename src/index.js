@@ -67,17 +67,53 @@ document.getElementById("generateReportBtn").addEventListener("click", function 
     //Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailbyHour, savePath);
     let showDetailByDesk = document.getElementById("deskCheck").checked;
     let showDetailbyHour = document.getElementById("hourCheck").checked;
-    Reports.generateTestReport(showDetailByDesk, showDetailbyHour);
+    let startDate = document.getElementById('startDate').value;
+    let endDate = document.getElementById('endDate').value;
+    Reports.generateTestReport(startDate, endDate, showDetailByDesk, showDetailbyHour);
 });
 
 MoveLocalText.moveText();
 
 var startPicker = new Pikaday({
-    field: document.getElementById('startDate')
+    field: document.getElementById('startDate'),
+    format: 'M/D/YYYY',
+    toString(date, format) {
+        // you should do formatting based on the passed format,
+        // but we will just return 'D/M/YYYY' for simplicity
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    },
+    parse(dateString, format) {
+        // dateString is the result of `toString` method
+        let parts = dateString.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1] - 1, 10);
+        let year = parseInt(parts[1], 10);
+        return new Date(year, month, day);
+    }
 });
 
 var endPicker = new Pikaday({
-    field: document.getElementById('endDate')
+    field: document.getElementById('endDate'),
+    format: 'M/D/YYYY',
+    toString(date, format) {
+        // you should do formatting based on the passed format,
+        // but we will just return 'D/M/YYYY' for simplicity
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    },
+    parse(dateString, format) {
+        // dateString is the result of `toString` method
+        let parts = dateString.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1] - 1, 10);
+        let year = parseInt(parts[1], 10);
+        return new Date(year, month, day);
+    }
 });
 
 // add listeners to page elements
