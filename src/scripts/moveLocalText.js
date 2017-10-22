@@ -54,7 +54,6 @@ module.exports = {
                             });
                     }
                 } else {
-                    console.log("Nothing to move");
                     return;
                 }
             });

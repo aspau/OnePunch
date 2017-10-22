@@ -7,7 +7,6 @@ const self = module.exports = {
     parseFileToObjects: function (startDate, endDate) {
         return new Promise(function (resolve, reject) {
             SettingsScript.getSetting().then(function (returnedSettings) {
-                console.log("dates are " + startDate + " and " + endDate);
                 const jsStartDate = new Date(startDate);
                 const jsEndDate = new Date(endDate);
                 const offsetMs = jsEndDate.getTime() + (1000 * 60 * 60 * 24);
@@ -130,18 +129,57 @@ const self = module.exports = {
             }
         });
     },
-    writeTotalsToCsv: function (totalsArray, savePath) {
+    writeTotalsToCsv: function (totalsArray, savePath, showDetailByDesk, showDetailByHour) {
         return new Promise(function (resolve, reject) {
-            resolve(true);
+            console.log(totalsArray);
+            if (showDetailByDesk) {
+                if (showDetailByHour) {
+                    headerRow = "Date, Hour, Desk, Count\r\n";
+                } else {
+                    headerRow = "Date, Desk, Count\r\n";
+                }
+            } else {
+                if (showDetailByHour) {
+                    headerRow = "Date, Hour, Count\r\n";
+                } else {
+                    headerRow = "Date, Count\r\n";
+                }
+            }
+            const fullSavePath = savePath + "\\op_report.csv";
+            console.log(fullSavePath);
+            console.log(headerRow);
+            fs.writeFile(
+                fullSavePath,
+                headerRow, {
+                    encoding: "UTF-8",
+                    flag: "a"
+                },
+                function (err) {
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        for (i = 0; i < totalsArray.length; i++) {
+                            self.getCsvLine(totalsArray[i], showDetailByDesk, showDetailByHour)
+                                .then(function (csvLine) {
+                                    return self.writeCsvLine(csvLine, fullSavePath)
+                                        .then(function (lineWritten) {
+                                            if (i == totalsArray.length - 1) {
+                                                resolve(true);
+                                            }
+                                        });
+                                });
+                        }
+                    }
+                });
         });
     },
-    generateReport(startDate, endDate, showDetailByDesk, showDetailbyHour, savePath) {
+    generateReport: function (startDate, endDate, showDetailByDesk, showDetailByHour, savePath) {
         return new Promise(function (resolve, reject) {
             self.parseFileToObjects(startDate, endDate)
                 .then(function (objectArray) {
-                    return self.processObjectsToTotals(objectArray, showDetailByDesk, showDetailbyHour)
+                    return self.processObjectsToTotals(objectArray, showDetailByDesk, showDetailByHour)
                         .then(function (totalsArray) {
-                            return self.writeTotalsToCsv(totalsArray, savePath);
+                            return self.writeTotalsToCsv(totalsArray, savePath, showDetailByDesk, showDetailByHour);
                         }).then(function (reportingComplete) {
                             resolve(reportingComplete);
                         }).catch(function (error) {
@@ -150,21 +188,42 @@ const self = module.exports = {
                 });
         });
     },
-
-    generateTestReport(startDate, endDate, showDetailByDesk, showDetailbyHour) {
+    writeCsvLine: function (logText, fullSavePath) {
         return new Promise(function (resolve, reject) {
-            self.parseFileToObjects(startDate, endDate)
-                .then(function (objectArray) {
-                    return self.processObjectsToTotals(objectArray, showDetailByDesk, showDetailbyHour)
-                        .then(function (totalsArray) {
-                            console.log(totalsArray);
-                        }).catch(function (error) {
-                            console.log("Failed!", error);
-                        });
+            fs.writeFile(
+                fullSavePath,
+                logText, {
+                    encoding: "UTF-8",
+                    flag: "a"
+                },
+                function (err) {
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
                 });
         });
+    },
+    getCsvLine: function (totalsArrayI, showDetailByDesk, showDetailByHour) {
+        return new Promise(function (resolve, reject) {
+            if (showDetailByDesk) {
+                if (showDetailByHour) {
+                    logText = totalsArrayI.date + "," + totalsArrayI.hour + "," + totalsArrayI.desk + "," + totalsArrayI.count + "\r\n";
+                    resolve(logText);
+                } else {
+                    logText = totalsArrayI.date + "," + totalsArrayI.desk + "," + totalsArrayI.count + "\r\n";
+                    resolve(logText);
+                }
+            } else {
+                if (showDetailByHour) {
+                    logText = totalsArrayI.date + "," + totalsArrayI.hour + "," + totalsArrayI.count + "\r\n";
+                    resolve(logText);
+                } else {
+                    logText = totalsArrayI.date + "," + totalsArrayI.count + "\r\n";
+                    resolve(logText);
+                }
+            }
+        });
     }
-
-
-
 }
