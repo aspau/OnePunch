@@ -1,9 +1,11 @@
 // Load library
 const LogText = require("./scripts/logText");
 const MoveLocalText = require("./scripts/moveLocalText");
+const Reports = require("./scripts/reporting");
 const SettingsScript = require("./scripts/settings_script");
 const AddLogLocations = require("./scripts/addLogLocations");
 const FileDialog = require("./scripts/getFileDialog");
+const Pikaday = require("./scripts/pikaday");
 
 const {
     globalShortcut
@@ -11,9 +13,9 @@ const {
 
 // Function to add HotKey. Will be called after data loaded
 
-function setHotKey(hotKey, deskName, logPath, secondaryLogPath) {
+function setHotKey(hotKey) {
     globalShortcut.register(hotKey, () => {
-        LogText.logText(deskName, logPath, secondaryLogPath);
+        LogText.logText();
     });
 }
 
@@ -38,33 +40,81 @@ document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
 
 // load data and change settings tab to match current settings
 
-
 SettingsScript.getSetting().then(function (returnedSettings) {
-    console.log(returnedSettings);
     const logPath = returnedSettings.logPath.primary;
-    const localLogPath = returnedSettings.logPath.local;
     const hotKey = returnedSettings.hotKey;
     const deskName = returnedSettings.deskName;
-    const secondaryLogPath = returnedSettings.logPath.secondary;
-    setHotKey(hotKey, deskName, logPath, secondaryLogPath);
+    setHotKey(hotKey);
     document.getElementById("deskPicker").value = deskName;
     document.getElementById("logPath").value = logPath;
     document.getElementById('logFolderName').textContent = logPath;
-    document.getElementById("localLogPath").value = localLogPath;
-    document.getElementById('localLogFolderName').textContent = localLogPath;
-    document.querySelectorAll('input[name="hotkeyRadio"]').forEach(function (radioBtn) {
+    document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
         if (radioBtn.value === hotKey) {
             radioBtn.checked = true;;
         }
     });
-    document.getElementById("logBtn").addEventListener("click", function () {
-        LogText.logText(deskName, logPath, secondaryLogPath);
-    });
-    document.getElementById("moveLocalBtn").addEventListener("click", function () {
-        MoveLocalText.moveText(logPath, secondaryLogPath);
-    });
-    // check for local logs and try moving them to network file
-    MoveLocalText.moveText(logPath, secondaryLogPath);
+    document.getElementById("currentHotKey").value = hotKey;
+});
+
+
+document.getElementById("logBtn").addEventListener("click", function () {
+    LogText.logText();
+});
+document.getElementById("moveLocalBtn").addEventListener("click", function () {
+    MoveLocalText.moveText();
+});
+document.getElementById("generateReportBtn").addEventListener("click", function () {
+    //Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailbyHour, savePath);
+    let showDetailByDesk = document.getElementById("deskCheck").checked;
+    let showDetailByHour = document.getElementById("hourCheck").checked;
+    let startDate = document.getElementById('startDate').value;
+    let endDate = document.getElementById('endDate').value;
+    let savePath = document.getElementById("savePath").value;
+    Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailByHour, savePath);
+});
+
+MoveLocalText.moveText();
+
+var startPicker = new Pikaday({
+    field: document.getElementById('startDate'),
+    format: 'M/D/YYYY',
+    toString(date, format) {
+        // you should do formatting based on the passed format,
+        // but we will just return 'D/M/YYYY' for simplicity
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    },
+    parse(dateString, format) {
+        // dateString is the result of `toString` method
+        let parts = dateString.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1] - 1, 10);
+        let year = parseInt(parts[1], 10);
+        return new Date(year, month, day);
+    }
+});
+
+var endPicker = new Pikaday({
+    field: document.getElementById('endDate'),
+    format: 'M/D/YYYY',
+    toString(date, format) {
+        // you should do formatting based on the passed format,
+        // but we will just return 'D/M/YYYY' for simplicity
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    },
+    parse(dateString, format) {
+        // dateString is the result of `toString` method
+        let parts = dateString.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1] - 1, 10);
+        let year = parseInt(parts[1], 10);
+        return new Date(year, month, day);
+    }
 });
 
 // add listeners to page elements
@@ -76,26 +126,29 @@ document.getElementById("logPicker").addEventListener("click", function () {
     });
 });
 
-document.getElementById("localLogPicker").addEventListener("click", function () {
+document.getElementById("savePicker").addEventListener("click", function () {
     FileDialog.getFolder().then(function (chosenDir) {
-        document.getElementById('localLogFolderName').textContent = chosenDir;
-        document.getElementById("localLogPath").value = chosenDir;
+        document.getElementById('saveFolderName').textContent = chosenDir;
+        document.getElementById("savePath").value = chosenDir;
     });
 });
 
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
+    let currentHotKey = document.getElementById("currentHotKey").value;
     let hotKeyChoice = document.querySelector('input[name="hotKey"]:checked').value;
+    document.getElementById("currentHotKey").value = hotKeyChoice;
     let chosenDir = document.getElementById("logPath").value;
-    let localChosenDir = document.getElementById("localLogPath").value;
     let settingsObj = {};
     AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
-        logPath.local = localChosenDir;
         SettingsScript.saveSetting('logPath', logPath)
             .then(function (settingSaved) {
                 return SettingsScript.saveSetting('deskName', deskNameEntry);
             }).then(function (settingSaved) {
                 return SettingsScript.saveSetting('hotKey', hotKeyChoice);
+            }).then(function (settingSaved) {
+                globalShortcut.unregister(currentHotKey);
+                setHotKey(hotKeyChoice);
             }).catch(function (error) {
                 console.log("Failed!", error);
             });

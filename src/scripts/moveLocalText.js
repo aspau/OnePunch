@@ -1,58 +1,62 @@
 const fs = require('fs');
 const path = require('path');
 const SettingsScript = require('./settings_script')
-const localLogPath = SettingsScript.getSetting('logPath.local');
-const local = localLogPath + "\\op_log.txt";
+const WindowsNotifications = require("./windowsNotifications");
 
-const self = module.exports = {
-    moveText: function (logPath, secondaryLogPath) {
-        const primary = logPath + "\\op_log.txt";
-        const secondary = secondaryLogPath + "\\op_log.txt";
-        fs.readFile(local, "utf8", function (err, data) {
-            if (err) console.log(err);
-            if (data) {
-                const localLogLen = data.length;
-                if (localLogLen > 0) {
-                    fs.writeFile(
-                        primary,
-                        data, {
-                            encoding: "UTF-8",
-                            flag: "a"
-                        },
-                        function (err) {
-                            if (err) {
-                                fs.writeFile(
-                                    secondary,
-                                    data, {
-                                        encoding: "UTF-8",
-                                        flag: "a"
-                                    },
-                                    function (err) {
-                                        if (err) {
-                                            return;
-                                        } else {
-                                            self.deleteLocalLog();
-                                            return;
-                                        }
-                                    });
-                            } else {
-                                self.deleteLocalLog();
-                                return;
-                            }
-                        });
+module.exports = {
+    moveText: function () {
+        SettingsScript.getSetting().then(function (returnedSettings) {
+            const logPath = returnedSettings.logPath.primary;
+            const secondaryLogPath = returnedSettings.logPath.secondary;
+            const primary = logPath + "\\op_log.txt";
+            const secondary = secondaryLogPath + "\\op_log.txt";
+            SettingsScript.getSetting('localLogs').then(function (localLogs) {
+                if (localLogs) {
+                    for (var i = 0, len = localLogs.length; i < len; i++) {
+                        let logText = localLogs[i];
+                        fs.writeFile(
+                            primary,
+                            logText, {
+                                encoding: "UTF-8",
+                                flag: "a"
+                            },
+                            function (err) {
+                                if (err) {
+                                    fs.writeFile(
+                                        secondary,
+                                        logText, {
+                                            encoding: "UTF-8",
+                                            flag: "a"
+                                        },
+                                        function (err) {
+                                            if (err) {
+                                                WindowsNotifications.notify("Cannot connect!", "Logs will save locally until connected to network drive", "exclamation_mark_64.png", 3500);
+                                                return;
+                                            } else {
+                                                if (i = len - 1) {
+                                                    const notifyMessage = "Moved " + len + " logs from local storage to shared file";
+                                                    WindowsNotifications.notify("Update!", notifyMessage, "owl_ico_64.png", 3500);
+                                                    SettingsScript.deleteSetting('localLogs').then(function (remainingSettings) {
+                                                        return logText;
+                                                    });
+                                                }
+                                            }
+                                        });
+                                } else {
+                                    if (i = len - 1) {
+                                        const notifyMessage = "Moved " + len + " logs from local storage to shared file";
+                                        WindowsNotifications.notify("Update!", notifyMessage, "owl_ico_64.png", 3500);
+                                        SettingsScript.deleteSetting('localLogs').then(function (remainingSettings) {
+                                            return logText;
+                                        });
+                                    }
+                                }
+                            });
+                    }
+                } else {
+                    return;
                 }
-            }
-        });
-    },
-    deleteLocalLog: function () {
-        fs.writeFile(
-            local,
-            "", {
-                encoding: "UTF-8"
-            },
-            function (err) {
-                if (err) console.log(err);
-                return;
             });
+        });
     }
 }

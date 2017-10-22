@@ -12,21 +12,12 @@ document.getElementById("logPicker").addEventListener("click", function () {
     });
 });
 
-document.getElementById("localLogPicker").addEventListener("click", function () {
-    FileDialog.getFolder().then(function (chosenDir) {
-        document.getElementById('localLogFolderName').textContent = chosenDir;
-        document.getElementById("localLogPath").value = chosenDir;
-    });
-});
-
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
     let hotKeyChoice = document.querySelector('input[name="hotKey"]:checked').value;
     let chosenDir = document.getElementById("logPath").value;
-    let localChosenDir = document.getElementById("localLogPath").value;
     let settingsObj = {};
     AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
-        logPath.local = localChosenDir;
         SettingsScript.saveSetting('logPath', logPath)
             .then(function (settingSaved) {
                 return SettingsScript.saveSetting('deskName', deskNameEntry);

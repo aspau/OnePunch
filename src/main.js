@@ -66,7 +66,7 @@ function createSplashScreen() {
 function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 380,
-        height: 800,
+        height: 700,
         //resizable: false,
         show: true,
         center: true,
@@ -93,7 +93,7 @@ function createSettingsWindow() {
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 380,
-        height: 800,
+        height: 700,
         //resizable: false,
         show: false,
         center: true,
