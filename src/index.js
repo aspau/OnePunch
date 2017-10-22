@@ -1,6 +1,7 @@
 // Load library
 const LogText = require("./scripts/logText");
 const MoveLocalText = require("./scripts/moveLocalText");
+const Reports = require("./scripts/reporting");
 const SettingsScript = require("./scripts/settings_script");
 const AddLogLocations = require("./scripts/addLogLocations");
 const FileDialog = require("./scripts/getFileDialog");
@@ -11,9 +12,10 @@ const {
 
 // Function to add HotKey. Will be called after data loaded
 
-function setHotKey(hotKey, deskName, logPath, secondaryLogPath) {
+function setHotKey(hotKey) {
+    console.log("Registering... " + hotKey);
     globalShortcut.register(hotKey, () => {
-        LogText.logText(deskName, logPath, secondaryLogPath);
+        LogText.logText();
     });
 }
 
@@ -38,29 +40,34 @@ document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
 
 // load data and change settings tab to match current settings
 
-
 SettingsScript.getSetting().then(function (returnedSettings) {
     const logPath = returnedSettings.logPath.primary;
     const hotKey = returnedSettings.hotKey;
     const deskName = returnedSettings.deskName;
-    const secondaryLogPath = returnedSettings.logPath.secondary;
-    setHotKey(hotKey, deskName, logPath, secondaryLogPath);
+    setHotKey(hotKey);
     document.getElementById("deskPicker").value = deskName;
     document.getElementById("logPath").value = logPath;
     document.getElementById('logFolderName').textContent = logPath;
-    document.querySelectorAll('input[name="hotkeyRadio"]').forEach(function (radioBtn) {
+    document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
+        console.log("Radio button is " + radioBtn.value + " and hotKey choice is " + hotKey);
         if (radioBtn.value === hotKey) {
             radioBtn.checked = true;;
         }
     });
+    document.getElementById("currentHotKey").value = hotKey;
     document.getElementById("logBtn").addEventListener("click", function () {
-        LogText.logText(deskName, logPath, secondaryLogPath);
+        LogText.logText();
     });
     document.getElementById("moveLocalBtn").addEventListener("click", function () {
-        MoveLocalText.moveText(logPath, secondaryLogPath);
+        MoveLocalText.moveText();
     });
+    document.getElementById("generateReportBtn").addEventListener("click", function () {
+        //Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailbyHour, savePath);
+        Reports.parseFileToObjects();
+    });
+
     // check for local logs and try moving them to network file
-    MoveLocalText.moveText(logPath, secondaryLogPath);
+    MoveLocalText.moveText();
 });
 
 // add listeners to page elements
@@ -74,7 +81,9 @@ document.getElementById("logPicker").addEventListener("click", function () {
 
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
+    let currentHotKey = document.getElementById("currentHotKey").value;
     let hotKeyChoice = document.querySelector('input[name="hotKey"]:checked').value;
+    document.getElementById("currentHotKey").value = hotKeyChoice;
     let chosenDir = document.getElementById("logPath").value;
     let settingsObj = {};
     AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
@@ -83,6 +92,10 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                 return SettingsScript.saveSetting('deskName', deskNameEntry);
             }).then(function (settingSaved) {
                 return SettingsScript.saveSetting('hotKey', hotKeyChoice);
+            }).then(function (settingSaved) {
+                console.log("Hot Key Choice is " + hotKeyChoice);
+                globalShortcut.unregister(currentHotKey);
+                setHotKey(hotKeyChoice);
             }).catch(function (error) {
                 console.log("Failed!", error);
             });

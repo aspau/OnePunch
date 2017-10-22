@@ -11,6 +11,7 @@
 <body>
     <div id="menuBar" class="ui buttons fluid">
         <button value="homeTab" class="tabControl ui button large active" id="homeBtn">Home</button>
+        <button value="reportsTab" class="tabControl ui button large" id="reportsBtn">Reports</button>
         <button value="settingsTab" class="tabControl ui button large" id="settingsBtn">Settings</button>
     </div>
     <div id="homeTab" class="tabContent ui grid middle aligned centered">
@@ -25,6 +26,11 @@
         </div>
         <div class="fourteen wide column">
             <p style="text-align: center">v. 0.1.0<br><br>Icons made by Freepik.com and Pixel Buddhafrom www.flaticon.com<br>and licensed by CC 3.0 BY<br>Built with Electron</p>
+        </div>
+    </div>
+    <div id="reportsTab" class="tabContent ui grid middle aligned centered" style="display:none;">
+        <div class="twelve wide column">
+            <button id="generateReportBtn" class="fluid ui purple button">Generate Report</button>
         </div>
     </div>
     <div id="settingsTab" class="tabContent ui grid middle aligned centered" style="display:none;">
@@ -54,6 +60,7 @@
                 <input type="radio" name="hotKey" value="Ctrl+Alt+F9" id="ctrlAltF9" class="ui radio checkbox">
                 <label for="ctrlAltF9">Ctrl + Alt + F9</label>
             </div>
+            <input id="currentHotKey" type="hidden" name="userSetting" value="">
         </div>
         <div class="sixteen wide column">
             <h2>Desk</h2>

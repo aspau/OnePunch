@@ -3,7 +3,7 @@ const {
 } = require('electron').remote
 
 module.exports = {
-    getFolder: function (settingsKey) {
+    getFolder: function () {
         return new Promise(function (resolve, reject) {
             dialog.showOpenDialog({
                 properties: ['openDirectory']

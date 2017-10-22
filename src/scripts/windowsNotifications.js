@@ -2,7 +2,6 @@ module.exports = {
 
     notify: function (notificationTitle, notificationText, icon, hangTime) {
         const iconPath = '../images/' + icon;
-        console.log(iconPath);
         const options = {
             icon: iconPath,
             body: notificationText
