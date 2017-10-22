@@ -1,16 +1,17 @@
 module.exports = {
 
-    notify: function (notificationTitle, notificationText) {
-
+    notify: function (notificationTitle, notificationText, icon, hangTime) {
+        const iconPath = '../images/' + icon;
+        console.log(iconPath);
         const options = {
-            icon: '../images/owl_ico_64.png',
+            icon: iconPath,
             body: notificationText
         };
         const notification = new Notification(notificationTitle, options);
         notification.onshow = function () {
             setTimeout(function () {
                 notification.close();
-            }, 2000);
+            }, hangTime);
         }
 
 

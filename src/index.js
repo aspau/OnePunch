@@ -40,9 +40,7 @@ document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
 
 
 SettingsScript.getSetting().then(function (returnedSettings) {
-    console.log(returnedSettings);
     const logPath = returnedSettings.logPath.primary;
-    const localLogPath = returnedSettings.logPath.local;
     const hotKey = returnedSettings.hotKey;
     const deskName = returnedSettings.deskName;
     const secondaryLogPath = returnedSettings.logPath.secondary;
@@ -50,8 +48,6 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     document.getElementById("deskPicker").value = deskName;
     document.getElementById("logPath").value = logPath;
     document.getElementById('logFolderName').textContent = logPath;
-    document.getElementById("localLogPath").value = localLogPath;
-    document.getElementById('localLogFolderName').textContent = localLogPath;
     document.querySelectorAll('input[name="hotkeyRadio"]').forEach(function (radioBtn) {
         if (radioBtn.value === hotKey) {
             radioBtn.checked = true;;
@@ -76,21 +72,12 @@ document.getElementById("logPicker").addEventListener("click", function () {
     });
 });
 
-document.getElementById("localLogPicker").addEventListener("click", function () {
-    FileDialog.getFolder().then(function (chosenDir) {
-        document.getElementById('localLogFolderName').textContent = chosenDir;
-        document.getElementById("localLogPath").value = chosenDir;
-    });
-});
-
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
     let hotKeyChoice = document.querySelector('input[name="hotKey"]:checked').value;
     let chosenDir = document.getElementById("logPath").value;
-    let localChosenDir = document.getElementById("localLogPath").value;
     let settingsObj = {};
     AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
-        logPath.local = localChosenDir;
         SettingsScript.saveSetting('logPath', logPath)
             .then(function (settingSaved) {
                 return SettingsScript.saveSetting('deskName', deskNameEntry);
