@@ -64,7 +64,6 @@ document.getElementById("moveLocalBtn").addEventListener("click", function () {
     MoveLocalText.moveText();
 });
 document.getElementById("generateReportBtn").addEventListener("click", function () {
-    //Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailbyHour, savePath);
     let showDetailByDesk = document.getElementById("deskCheck").checked;
     let showDetailByHour = document.getElementById("hourCheck").checked;
     let startDate = document.getElementById('startDate').value;

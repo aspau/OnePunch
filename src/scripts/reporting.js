@@ -1,10 +1,8 @@
 const fs = require('fs');
 const SettingsScript = require('./settings_script')
 
-//"Sun,10/22/2017,12:52,liam
-
 const self = module.exports = {
-    parseFileToObjects: function (startDate, endDate) {
+    parseFileToObjects: function (startDate, endDate, showDetailByDesk, showDetailByHour) {
         return new Promise(function (resolve, reject) {
             SettingsScript.getSetting().then(function (returnedSettings) {
                 const jsStartDate = new Date(startDate);
@@ -35,13 +33,17 @@ const self = module.exports = {
                                     logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
                                     logObj.jsDate = new Date(logDateTimeString);
                                     logObj.hour = logObj.jsDate.getHours();
+                                    logObj.count = 1;
+                                    sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
+                                    logObj.sortString =sortString;
                                     if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
                                         objectArray.push(logObj);
                                     }
                                     if (i == logArray.length - 2) {
                                         objectArray.sort(function (a, b) {
-                                            return a.jsDate - b.jsDate;
+                                            return a.sortString - b.sortString;
                                         });
+                                        console.log(objectArray);
                                         resolve(objectArray);
                                     }
                                 }
@@ -60,13 +62,16 @@ const self = module.exports = {
                             logObj.jsDate = new Date(logDateTimeString);
                             logObj.hour = logObj.jsDate.getHours();
                             logObj.count = 1;
+                            sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
+                            logObj.sortString = sortString;
                             if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
                                 objectArray.push(logObj);
                             }
                             if (i == logArray.length - 2) {
                                 objectArray.sort(function (a, b) {
-                                    return a.jsDate - b.jsDate;
+                                    return a.sortString - b.sortString;
                                 });
+                                console.log(objectArray);
                                 resolve(objectArray);
                             }
                         }
@@ -75,14 +80,14 @@ const self = module.exports = {
             });
         });
     },
-    processObjectsToTotals: function (objectArray, showDetailByDesk, showDetailbyHour) {
+    processObjectsToTotals: function (objectArray, showDetailByDesk, showDetailByHour) {
         return new Promise(function (resolve, reject) {
             let totalsArray = [];
             totalsArray.push(objectArray[0]);
             let totalsArrayIndex = 0;
             for (i = 1; i < objectArray.length; i++) {
                 if (showDetailByDesk) {
-                    if (showDetailbyHour) {
+                    if (showDetailByHour) {
                         if (objectArray[i].date == objectArray[i - 1].date && objectArray[i].hour == objectArray[i - 1].hour && objectArray[i].desk == objectArray[i - 1].desk) {
                             totalsArray[totalsArrayIndex].count += 1;
                         } else {
@@ -104,7 +109,7 @@ const self = module.exports = {
                         }
                     }
                 } else {
-                    if (showDetailbyHour) {
+                    if (showDetailByHour) {
                         if (objectArray[i].date == objectArray[i - 1].date && objectArray[i].hour == objectArray[i - 1].hour) {
                             totalsArray[totalsArrayIndex].count += 1;
                         } else {
@@ -129,57 +134,110 @@ const self = module.exports = {
             }
         });
     },
-    writeTotalsToCsv: function (totalsArray, savePath, showDetailByDesk, showDetailByHour) {
+
+    writeTotalsToCsv: function (totalsArray, savePath, showDetailByDesk, showDetailByHour, startDate, endDate) {
         return new Promise(function (resolve, reject) {
-            console.log(totalsArray);
+            const jsStartDate = new Date(startDate);
+            const jsEndDate = new Date(endDate);
             if (showDetailByDesk) {
                 if (showDetailByHour) {
-                    headerRow = "Date, Hour, Desk, Count\r\n";
+                    outputString = "Date,Hour,Desk,Count";
                 } else {
-                    headerRow = "Date, Desk, Count\r\n";
+                    outputString = "Date,Desk,Count";
                 }
             } else {
                 if (showDetailByHour) {
-                    headerRow = "Date, Hour, Count\r\n";
+                    outputString = "Date,Hour,Count";
                 } else {
-                    headerRow = "Date, Count\r\n";
+                    outputString = "Date,Count";
                 }
             }
-            const fullSavePath = savePath + "\\op_report.csv";
-            console.log(fullSavePath);
-            console.log(headerRow);
-            fs.writeFile(
-                fullSavePath,
-                headerRow, {
-                    encoding: "UTF-8",
-                    flag: "a"
-                },
-                function (err) {
-                    if (err) {
-                        resolve(false);
+            let fullSavePath = savePath + "\\op_report.csv";
+            for (i = 0; i < totalsArray.length; i++) {
+                if (showDetailByDesk) {
+                    if (showDetailByHour) {
+                        outputString = outputString + '\r\n' + totalsArray[i].date + ',' + totalsArray[i].hour + ',"' + totalsArray[i].desk + '",' + totalsArray[i].count;
+                        if (i == totalsArray.length - 1) {
+                            fs.writeFile(
+                                fullSavePath,
+                                outputString, {
+                                    encoding: "UTF-8",
+                                    flag: "a"
+                                },
+                                function (err) {
+                                    if (err) {
+                                        resolve(false);
+                                    } else {
+                                        resolve(true);
+                                    }
+                                });
+                        }
                     } else {
-                        for (i = 0; i < totalsArray.length; i++) {
-                            self.getCsvLine(totalsArray[i], showDetailByDesk, showDetailByHour)
-                                .then(function (csvLine) {
-                                    return self.writeCsvLine(csvLine, fullSavePath)
-                                        .then(function (lineWritten) {
-                                            if (i == totalsArray.length - 1) {
-                                                resolve(true);
-                                            }
-                                        });
+                        outputString = outputString + '\r\n' + totalsArray[i].date + ',"' + totalsArray[i].desk + '",' + totalsArray[i].count;
+                        if (i == totalsArray.length - 1) {
+                            fs.writeFile(
+                                fullSavePath,
+                                outputString, {
+                                    encoding: "UTF-8",
+                                    flag: "a"
+                                },
+                                function (err) {
+                                    if (err) {
+                                        resolve(false);
+                                    } else {
+                                        resolve(true);
+                                    }
                                 });
                         }
                     }
-                });
+                } else {
+                    if (showDetailByHour) {
+                        outputString = outputString + "\r\n" + totalsArray[i].date + "," + totalsArray[i].hour + "," + totalsArray[i].count;
+                        if (i == totalsArray.length - 1) {
+                            fs.writeFile(
+                                fullSavePath,
+                                outputString, {
+                                    encoding: "UTF-8",
+                                    flag: "a"
+                                },
+                                function (err) {
+                                    if (err) {
+                                        resolve(false);
+                                    } else {
+                                        resolve(true);
+                                    }
+                                });
+                        }
+                    } else {
+                        outputString = outputString + "\r\n" + totalsArray[i].date + "," + totalsArray[i].count;
+                        if (i == totalsArray.length - 1) {
+                            fs.writeFile(
+                                fullSavePath,
+                                outputString, {
+                                    encoding: "UTF-8",
+                                    flag: "a"
+                                },
+                                function (err) {
+                                    if (err) {
+                                        resolve(false);
+                                    } else {
+                                        resolve(true);
+                                    }
+                                });
+                        }
+                    }
+                }
+            }
         });
     },
+
     generateReport: function (startDate, endDate, showDetailByDesk, showDetailByHour, savePath) {
         return new Promise(function (resolve, reject) {
-            self.parseFileToObjects(startDate, endDate)
+            self.parseFileToObjects(startDate, endDate, showDetailByDesk, showDetailByHour)
                 .then(function (objectArray) {
                     return self.processObjectsToTotals(objectArray, showDetailByDesk, showDetailByHour)
                         .then(function (totalsArray) {
-                            return self.writeTotalsToCsv(totalsArray, savePath, showDetailByDesk, showDetailByHour);
+                            return self.writeTotalsToCsv(totalsArray, savePath, showDetailByDesk, showDetailByHour, startDate, endDate);
                         }).then(function (reportingComplete) {
                             resolve(reportingComplete);
                         }).catch(function (error) {
@@ -188,42 +246,32 @@ const self = module.exports = {
                 });
         });
     },
-    writeCsvLine: function (logText, fullSavePath) {
-        return new Promise(function (resolve, reject) {
-            fs.writeFile(
-                fullSavePath,
-                logText, {
-                    encoding: "UTF-8",
-                    flag: "a"
-                },
-                function (err) {
-                    if (err) {
-                        resolve(false);
-                    } else {
-                        resolve(true);
-                    }
-                });
-        });
-    },
-    getCsvLine: function (totalsArrayI, showDetailByDesk, showDetailByHour) {
-        return new Promise(function (resolve, reject) {
-            if (showDetailByDesk) {
-                if (showDetailByHour) {
-                    logText = totalsArrayI.date + "," + totalsArrayI.hour + "," + totalsArrayI.desk + "," + totalsArrayI.count + "\r\n";
-                    resolve(logText);
-                } else {
-                    logText = totalsArrayI.date + "," + totalsArrayI.desk + "," + totalsArrayI.count + "\r\n";
-                    resolve(logText);
-                }
+
+    sortObj: function (jsDate, deskName, showDetailByDesk, showDetailByHour) {
+        let objHour = jsDate.getHours();
+        let objDate = jsDate.getDate();
+        let objMonth = jsDate.getMonth() + 1;
+        let objYear = jsDate.getFullYear();
+        let stringHour = ('0' + objHour).slice(-2);
+        let stringMonth = ('0' + objMonth).slice(-2);
+        let stringDate = ('0' + objDate).slice(-2);
+        let sortString;
+        zeroString = "000000000000000";
+        if (showDetailByDesk) {
+            sortString = objYear + stringMonth + stringDate;
+            deskDiff = 15 - deskName.length;
+            deskString = zeroString.substr(0, deskDiff) + deskName
+            if (showDetailByHour) {
+                sortString = sortString + stringHour + deskString;
+                return sortString;
             } else {
-                if (showDetailByHour) {
-                    logText = totalsArrayI.date + "," + totalsArrayI.hour + "," + totalsArrayI.count + "\r\n";
-                    resolve(logText);
-                } else {
-                    logText = totalsArrayI.date + "," + totalsArrayI.count + "\r\n";
-                    resolve(logText);
-                }
+                sortString = sortString + deskString;
+                return sortString;
             }
-        });
-    }
+        } else {
+            sortString = jsDate;
+            return sortString;
+        }
+    },
+
 }
