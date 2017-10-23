@@ -12,7 +12,8 @@ const {
 const AutoLaunch = require('auto-launch');
 const url = require('url');
 const path = require('path');
-const SettingsScript = require('./scripts/settings_script')
+const SettingsScript = require('./scripts/settings_script');
+const Reminders = require('./scripts/reminders')
 
 // Module to create native browser window.
 
@@ -61,6 +62,33 @@ function createSplashScreen() {
         // when you should delete the corresponding element.
         splashScreen = null
     });
+}
+
+function createRemindersWindow() {
+    remindersWindow = new BrowserWindow({
+        width: 350,
+        height: 500,
+        //resizable: false,
+        show: true,
+        center: true,
+        maximizable: false,
+        fullscreenable: false,
+        title: "OnePunch",
+        icon: iconpath
+    });
+    remindersWindow.loadURL(url.format({
+        pathname: path.join(__dirname, '/views/reminder.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    const remindersIcon = new Tray(iconpath);
+    remindersWindow.on('show', function () {
+        remindersIcon.setHighlightMode('always')
+    });
+    remindersWindow.on('closed', function () {
+        remindersWindow = null
+    });
+    //settingsWindow.setMenu(null);
 }
 
 function createSettingsWindow() {
@@ -149,8 +177,11 @@ function createMainWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
-    SettingsScript.getSetting("initialized").then(function (appInitialized) {
-        if (appInitialized) {
+    SettingsScript.getSetting().then(function (returnedSettings) {
+        if (returnedSettings.appInitialized) {
+            if (returnedSettings.reminders.notifications || returnedSettings.reminders.popUps) {
+                startReminders(reminders.notifications, reminders.popUps)
+            }
             createSplashScreen();
             createMainWindow()
         } else {
@@ -177,6 +208,15 @@ app.on('activate', function () {
 });
 
 
+function startReminders(notifications, popUps) {
+
+    Reminders.getDailyPunches().then(function (dailyPunchCount) {
+        console.log(dailyPunchCount);
+    })
+
+
+
+}
 
 /*const onePunchAutoLauncher = new AutoLaunch({
     name: 'OnePunch',
