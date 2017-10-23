@@ -65,10 +65,48 @@ function createSplashScreen() {
     });
 }
 
+function createAlertWindow(alertText) {
+
+    return new Promise(function (resolve, reject) {
+        let alertWindow;
+        // Create the browser window.
+        alertWindow = new BrowserWindow({
+            width: 350,
+            height: 300,
+            resizable: false,
+            center: true,
+            maximizable: false,
+            fullscreenable: false,
+            title: "OnePunch",
+            icon: iconpath,
+            show: false
+        });
+        // and load the html of the app.
+        alertWindow.loadURL(url.format({
+            pathname: path.join(__dirname, '/views/alert.html'),
+            protocol: 'file:',
+            slashes: true
+        }));
+
+        // Emitted when the window is closed.
+        alertWindow.on('closed', function () {
+            // Dereference the window object, usually you would store windows
+            // in an array if your app supports multi windows, this is the time
+            // when you should delete the corresponding element.
+            alertWindow = null
+        });
+        alertWindow.setMenu(null);
+
+        alertWindow.once('ready-to-show', () => {
+            resolve(true);
+        });
+    });
+}
+
 function createRemindersWindow() {
     remindersWindow = new BrowserWindow({
-        width: 310,
-        height: 370,
+        width: 350,
+        height: 475,
         resizable: false,
         show: true,
         center: true,
@@ -83,7 +121,7 @@ function createRemindersWindow() {
         slashes: true
     }));
     remindersWindow.once('ready-to-show', () => {
-        remindersWindow.show()
+        remindersWindow.show();
     })
     remindersWindow.on('closed', function () {
         remindersWindow = null
@@ -94,7 +132,7 @@ function createRemindersWindow() {
 function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 350,
-        height: 700,
+        height: 800,
         //resizable: false,
         show: true,
         center: true,
@@ -108,10 +146,6 @@ function createSettingsWindow() {
         protocol: 'file:',
         slashes: true
     }));
-    const settingsIcon = new Tray(iconpath);
-    settingsWindow.on('show', function () {
-        settingsIcon.setHighlightMode('always')
-    });
     settingsWindow.on('closed', function () {
         settingsWindow = null
     });
@@ -179,7 +213,7 @@ function createMainWindow() {
 app.on('ready', function () {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
-            if (returnedSettings.reminders) {
+            if (returnedSettings.reminders == "notifications" || returnedSettings.reminders == "popups") {
                 loopReminders(returnedSettings.reminders);
             }
             createSplashScreen();
@@ -221,7 +255,6 @@ function genReminders(reminderType) {
 function loopReminders(reminderType) {
     let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
     let reminderLagMs = 1000 * reminderLagMinutes;
-    console.log(reminderLagMinutes);
     remindersTimeout = setTimeout(function () {
         genReminders(reminderType)
         loopReminders(reminderType);
@@ -231,12 +264,12 @@ function loopReminders(reminderType) {
 ipcMain.on('settingsComplete', (event, arg) => {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
-            if (returnedSettings.reminders) {
+            if (returnedSettings.reminders == "notifications" || returnedSettings.reminders == "popups") {
                 loopReminders(returnedSettings.reminders);
             }
-            settingsWindow.close();
             createSplashScreen();
-            createMainWindow()
+            createMainWindow();
+            settingsWindow.close();
         } else {
             createSettingsWindow();
         }
@@ -244,12 +277,23 @@ ipcMain.on('settingsComplete', (event, arg) => {
 });
 
 ipcMain.on('remindersChanged', (event, remindersType) => {
-    if (remindersTimeout) {
+    if (typeof remindersTimeout !== 'undefined') {
         clearTimeout(remindersTimeout);
     }
-    if (remindersType) {
+    if (remindersType == "notifications" || remindersType == "popups") {
         loopReminders(remindersType);
     }
+});
+
+ipcMain.on('triggerAlert', (event, alertText) => {
+    createAlertWindow().then(function (windowReady) {
+        alertWindow.webContents.send('alertMessage', alertText);
+        alertWindow.show();
+        setTimeout(function () {
+            alertWindow.close();
+        }, 3000);
+
+    });
 });
 
 

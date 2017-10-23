@@ -24,20 +24,24 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     let remindersChoice = document.querySelector('input[name="reminders"]:checked').value;
     let chosenDir = document.getElementById("logPath").value;
     let settingsObj = {};
-    AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
-        SettingsScript.saveSetting('logPath', logPath)
-            .then(function (settingSaved) {
-                return SettingsScript.saveSetting('deskName', deskNameEntry);
-            }).then(function (settingSaved) {
-                return SettingsScript.saveSetting('hotKey', hotKeyChoice);
-            }).then(function (settingSaved) {
-                return SettingsScript.saveSetting('reminders', remindersChoice);
-            }).then(function (settingSaved) {
-                return SettingsScript.saveSetting('initialized', true);
-            }).then(function (settingSaved) {
-                ipcRenderer.send('settingsComplete');
-            }).catch(function (error) {
-                console.log("Failed!", error);
-            });
-    });
+    if (deskNameEntry != "" && chosenDir != "") {
+        AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
+            SettingsScript.saveSetting('logPath', logPath)
+                .then(function (settingSaved) {
+                    return SettingsScript.saveSetting('deskName', deskNameEntry);
+                }).then(function (settingSaved) {
+                    return SettingsScript.saveSetting('hotKey', hotKeyChoice);
+                }).then(function (settingSaved) {
+                    return SettingsScript.saveSetting('reminders', remindersChoice);
+                }).then(function (settingSaved) {
+                    return SettingsScript.saveSetting('initialized', true);
+                }).then(function (settingSaved) {
+                    ipcRenderer.send('settingsComplete');
+                }).catch(function (error) {
+                    console.log("Failed!", error);
+                });
+        });
+    } else {
+        ipcRenderer.send("triggerAlert","Please choose your settings");
+    }
 });

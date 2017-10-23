@@ -82,7 +82,11 @@ document.getElementById("generateReportBtn").addEventListener("click", function 
     let startDate = document.getElementById('startDate').value;
     let endDate = document.getElementById('endDate').value;
     let savePath = document.getElementById("savePath").value;
-    Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailByHour, savePath);
+    if (startDate != "" && endDate != "" && savePath != "") {
+        Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailByHour, savePath);
+    } else {
+        ipcRenderer.send("triggerAlert","Please choose report parameters");
+    }
 });
 
 MoveLocalText.moveText();
@@ -153,22 +157,26 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     document.getElementById("currentHotKey").value = hotKeyChoice;
     let chosenDir = document.getElementById("logPath").value;
     let settingsObj = {};
-    AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
-        SettingsScript.saveSetting('logPath', logPath)
-            .then(function (settingSaved) {
-                return SettingsScript.saveSetting('deskName', deskNameEntry);
-            }).then(function (settingSaved) {
-                return SettingsScript.saveSetting('hotKey', hotKeyChoice);
-            }).then(function (settingSaved) {
-                ipcRenderer.send('remindersChanged', remindersChoice);
-                return SettingsScript.saveSetting('reminders', remindersChoice);
-            }).then(function (settingSaved) {
-                globalShortcut.unregister(currentHotKey);
-                setHotKey(hotKeyChoice);
-            }).catch(function (error) {
-                console.log("Failed!", error);
-            });
-    });
+    if (deskNameEntry != "" && chosenDir != "") {
+        AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
+            SettingsScript.saveSetting('logPath', logPath)
+                .then(function (settingSaved) {
+                    return SettingsScript.saveSetting('deskName', deskNameEntry);
+                }).then(function (settingSaved) {
+                    return SettingsScript.saveSetting('hotKey', hotKeyChoice);
+                }).then(function (settingSaved) {
+                    ipcRenderer.send('remindersChanged', remindersChoice);
+                    return SettingsScript.saveSetting('reminders', remindersChoice);
+                }).then(function (settingSaved) {
+                    globalShortcut.unregister(currentHotKey);
+                    setHotKey(hotKeyChoice);
+                }).catch(function (error) {
+                    console.log("Failed!", error);
+                });
+        });
+    } else {
+        ipcRenderer.send("triggerAlert","Please choose your settings");
+    }
 });
 
 
