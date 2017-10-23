@@ -6,10 +6,17 @@ const SettingsScript = require("./scripts/settings_script");
 const AddLogLocations = require("./scripts/addLogLocations");
 const FileDialog = require("./scripts/getFileDialog");
 const Pikaday = require("./scripts/pikaday");
+const WindowsNotifications = require("./scripts/windowsNotifications");
 
 const {
     globalShortcut
 } = require('electron').remote;
+
+const {
+    ipcRenderer,
+    remote
+} = require('electron');
+var main = remote.require("./main.js");
 
 // Function to add HotKey. Will be called after data loaded
 
@@ -44,12 +51,18 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     const logPath = returnedSettings.logPath.primary;
     const hotKey = returnedSettings.hotKey;
     const deskName = returnedSettings.deskName;
+    const reminders = returnedSettings.reminders;
     setHotKey(hotKey);
     document.getElementById("deskPicker").value = deskName;
     document.getElementById("logPath").value = logPath;
     document.getElementById('logFolderName').textContent = logPath;
     document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
         if (radioBtn.value === hotKey) {
+            radioBtn.checked = true;;
+        }
+    });
+    document.querySelectorAll('input[name="reminders"]').forEach(function (radioBtn) {
+        if (radioBtn.value === reminders) {
             radioBtn.checked = true;;
         }
     });
@@ -136,6 +149,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
     let currentHotKey = document.getElementById("currentHotKey").value;
     let hotKeyChoice = document.querySelector('input[name="hotKey"]:checked').value;
+    let remindersChoice = document.querySelector('input[name="reminders"]:checked').value;
     document.getElementById("currentHotKey").value = hotKeyChoice;
     let chosenDir = document.getElementById("logPath").value;
     let settingsObj = {};
@@ -146,6 +160,9 @@ document.getElementById("saveBtn").addEventListener("click", function () {
             }).then(function (settingSaved) {
                 return SettingsScript.saveSetting('hotKey', hotKeyChoice);
             }).then(function (settingSaved) {
+                ipcRenderer.send('remindersChanged', remindersChoice);
+                return SettingsScript.saveSetting('reminders', remindersChoice);
+            }).then(function (settingSaved) {
                 globalShortcut.unregister(currentHotKey);
                 setHotKey(hotKeyChoice);
             }).catch(function (error) {
@@ -153,3 +170,36 @@ document.getElementById("saveBtn").addEventListener("click", function () {
             });
     });
 });
+
+
+ipcRenderer.on('reminderNotify', (event, arg) => {
+    let notificationTitle = "You've helped " + arg + " people today!";
+    WindowsNotifications.notify(notificationTitle, "Keep on punching!", "owl_ico_64.png", 2000)
+});
+
+// messaging to main
+/*
+// Send async message to main process
+ipcRenderer.send('async', 1);
+
+// Listen for async-reply message from main process
+ipcRenderer.on('async-reply', (event, arg) => {
+    // Print 2
+    console.log(arg);
+    // Send sync message to main process
+    let mainValue = ipcRenderer.sendSync('sync', 3);
+    // Print 4
+    console.log(mainValue);
+});
+
+// Listen for main message
+ipcRenderer.on('ping', (event, arg) => {
+    // Print 5
+    console.log(arg);
+    // Invoke method directly on main process
+    main.pong(6);
+});
+
+ipcRenderer.on('store-data', function (store) {
+    console.log(store);
+});*/

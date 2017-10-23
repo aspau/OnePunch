@@ -7,13 +7,14 @@ const {
     Tray,
     Menu,
     globalShortcut,
-    fs
+    fs,
+    ipcMain
 } = require('electron');
 const AutoLaunch = require('auto-launch');
 const url = require('url');
 const path = require('path');
 const SettingsScript = require('./scripts/settings_script');
-const Reminders = require('./scripts/reminders')
+const Reminders = require('./scripts/reminders');
 
 // Module to create native browser window.
 
@@ -68,7 +69,7 @@ function createRemindersWindow() {
     remindersWindow = new BrowserWindow({
         width: 350,
         height: 500,
-        //resizable: false,
+        resizable: false,
         show: true,
         center: true,
         maximizable: false,
@@ -81,14 +82,13 @@ function createRemindersWindow() {
         protocol: 'file:',
         slashes: true
     }));
-    const remindersIcon = new Tray(iconpath);
-    remindersWindow.on('show', function () {
-        remindersIcon.setHighlightMode('always')
-    });
+    remindersWindow.once('ready-to-show', () => {
+        remindersWindow.show()
+    })
     remindersWindow.on('closed', function () {
         remindersWindow = null
     });
-    //settingsWindow.setMenu(null);
+    settingsWindow.setMenu(null);
 }
 
 function createSettingsWindow() {
@@ -178,9 +178,9 @@ function createMainWindow() {
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
     SettingsScript.getSetting().then(function (returnedSettings) {
-        if (returnedSettings.appInitialized) {
-            if (returnedSettings.reminders.notifications || returnedSettings.reminders.popUps) {
-                startReminders(reminders.notifications, reminders.popUps)
+        if (returnedSettings.initialized) {
+            if (returnedSettings.reminders) {
+                loopReminders(returnedSettings.reminders);
             }
             createSplashScreen();
             createMainWindow()
@@ -208,17 +208,78 @@ app.on('activate', function () {
 });
 
 
-function startReminders(notifications, popUps) {
-
-    Reminders.getDailyPunches().then(function (dailyPunchCount) {
-        console.log(dailyPunchCount);
-    })
-
-
-
+function genReminders(reminderType) {
+    if (reminderType == "popups") {
+        createRemindersWindow();
+    } else if (reminderType == "notifications") {
+        Reminders.getDailyPunches().then(function (dailyPunchCount) {
+            mainWindow.webContents.send('reminderNotify', dailyPunchCount);
+        });
+    }
 }
 
-/*const onePunchAutoLauncher = new AutoLaunch({
+function loopReminders(reminderType) {
+    /*let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
+    let reminderLagMs = 1000 * 60 * reminderLagMinutes;*/
+    let reminderLagMs = 1000 * 10;
+    remindersTimeout = setTimeout(function () {
+        genReminders(reminderType)
+        loopReminders(reminderType);
+    }, reminderLagMs);
+};
+
+ipcMain.on('settingsComplete', (event, arg) => {
+    SettingsScript.getSetting().then(function (returnedSettings) {
+        if (returnedSettings.initialized) {
+            if (returnedSettings.reminders) {
+                loopReminders(returnedSettings.reminders);
+            }
+            settingsWindow.close();
+            createSplashScreen();
+            createMainWindow()
+        } else {
+            createSettingsWindow();
+        }
+    });
+});
+
+ipcMain.on('remindersChanged', (event, remindersType) => {
+    clearTimeout(remindersTimeout);
+    console.log(remindersType);
+    if (remindersType) {
+        loopReminders(remindersType);
+    }
+});
+
+/*
+// code for messaging between renderer and app
+
+// Listen for async message from renderer process
+ipcMain.on('async', (event, arg) => {
+    // Print 1
+    console.log(arg);
+    // Reply on async message from renderer process
+    event.sender.send('async-reply', 2);
+});
+
+// Listen for sync message from renderer process
+ipcMain.on('sync', (event, arg) => {
+    // Print 3
+    console.log(arg);
+    // Send value synchronously back to renderer process
+    event.returnValue = 4;
+    // Send async message to renderer process
+    mainWindow.webContents.send('ping', 5);
+});
+
+// Make method externaly visible
+exports.pong = arg => {
+    //Print 6
+    console.log(arg);
+}
+
+// code for auto-launching
+const onePunchAutoLauncher = new AutoLaunch({
     name: 'OnePunch',
     path: '/Applications/OnePunch.app',
 });
@@ -233,18 +294,4 @@ onePunchAutoLauncher.isEnabled()
     .catch(function (err) {
         // handle error
     })
-
-
-app.on('ready', () => {
-
-    settings.set('name', {
-        first: 'Cosmo',
-        last: 'Kramer'
-    });
-
-    settings.get('name.first');
-    // => "Cosmo"
-
-    settings.has('name.middle');
-    // => false
-});*/
+*/

@@ -43,7 +43,6 @@ const self = module.exports = {
                                         objectArray.sort(function (a, b) {
                                             return a.sortString - b.sortString;
                                         });
-                                        console.log(objectArray);
                                         resolve(objectArray);
                                     }
                                 }

@@ -24,6 +24,7 @@ const self = module.exports = {
                 let logObj = {};
                 fs.readFile(primary, "utf8", (err, data) => {
                     if (err) {
+                        console.log(err);
                         fs.readFile(secondary, "utf8", (err, data) => {
                             if (err) {
                                 console.log(err)
@@ -32,10 +33,10 @@ const self = module.exports = {
                                 const logArray = data.split("\n");
                                 for (i = 0; i < logArray.length - 1; i++) {
                                     logEntryArray = logArray[i].split(",");
-                                    logObj = {};
-                                    logObj.date = logEntryArray[1];
-                                    logObj.desk = logEntryArray[3];
-                                    if (logObj.date == matchDateString && logObj.desk == deskName) {
+                                    logDate = logEntryArray[1];
+                                    logDesk = logEntryArray[3];
+                                    logDesk = logDesk.trim();
+                                    if (logDate == matchDateString && logDesk == deskName) {
                                         punchesCounter += 1;
                                     }
                                     if (i == logArray.length - 2) {
@@ -48,10 +49,10 @@ const self = module.exports = {
                         const logArray = data.split("\n");
                         for (i = 0; i < logArray.length - 1; i++) {
                             logEntryArray = logArray[i].split(",");
-                            logObj = {};
-                            logObj.date = logEntryArray[1];
-                            logObj.desk = logEntryArray[3];
-                            if (logObj.date == matchDateString && logObj.desk == deskName) {
+                            logDate = logEntryArray[1];
+                            logDesk = logEntryArray[3];
+                            logDesk = logDesk.trim();
+                            if (logDate == matchDateString && logDesk == deskName) {
                                 punchesCounter += 1;
                             }
                             if (i == logArray.length - 2) {
