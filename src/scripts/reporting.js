@@ -35,7 +35,7 @@ const self = module.exports = {
                                     logObj.hour = logObj.jsDate.getHours();
                                     logObj.count = 1;
                                     sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
-                                    logObj.sortString =sortString;
+                                    logObj.sortString = sortString;
                                     if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
                                         objectArray.push(logObj);
                                     }
@@ -69,9 +69,15 @@ const self = module.exports = {
                             }
                             if (i == logArray.length - 2) {
                                 objectArray.sort(function (a, b) {
-                                    return a.sortString - b.sortString;
+                                    if (a.sortString > b.sortString) {
+                                        return 1;
+                                    } else if (a.sortString < b.sortString) {
+                                        return -1;
+                                    } else {
+                                        return 0;
+                                    }
                                 });
-                                console.log(objectArray);
+
                                 resolve(objectArray);
                             }
                         }

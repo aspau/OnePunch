@@ -93,7 +93,7 @@ function createSettingsWindow() {
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 380,
-        height: 700,
+        height: 750,
         //resizable: false,
         show: false,
         center: true,
