@@ -85,7 +85,7 @@ document.getElementById("generateReportBtn").addEventListener("click", function 
     if (startDate != "" && endDate != "" && savePath != "") {
         Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailByHour, savePath);
     } else {
-        ipcRenderer.send("triggerAlert","Please choose report parameters");
+        alert("Please choose report parameters");
     }
 });
 
@@ -175,7 +175,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                 });
         });
     } else {
-        ipcRenderer.send("triggerAlert","Please choose your settings");
+        alert("Please choose your settings");
     }
 });
 

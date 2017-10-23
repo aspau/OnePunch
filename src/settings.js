@@ -42,6 +42,6 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                 });
         });
     } else {
-        ipcRenderer.send("triggerAlert","Please choose your settings");
+        alert("Please choose your settings");
     }
 });

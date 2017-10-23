@@ -16,6 +16,18 @@ const path = require('path');
 const SettingsScript = require('./scripts/settings_script');
 const Reminders = require('./scripts/reminders');
 
+
+const appFolder = path.dirname(process.execPath)
+const exeName = path.basename(process.execPath)
+
+app.setLoginItemSettings({
+  openAtLogin: true,
+  args: [
+    '--processStart', `"${exeName}"`,
+    '--process-start-args', `"--hidden"`
+  ]
+})
+
 // Module to create native browser window.
 
 const iconpath = path.join(__dirname, '/images/owl_ico_16.png');
@@ -62,44 +74,6 @@ function createSplashScreen() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         splashScreen = null
-    });
-}
-
-function createAlertWindow(alertText) {
-
-    return new Promise(function (resolve, reject) {
-        let alertWindow;
-        // Create the browser window.
-        alertWindow = new BrowserWindow({
-            width: 350,
-            height: 300,
-            resizable: false,
-            center: true,
-            maximizable: false,
-            fullscreenable: false,
-            title: "OnePunch",
-            icon: iconpath,
-            show: false
-        });
-        // and load the html of the app.
-        alertWindow.loadURL(url.format({
-            pathname: path.join(__dirname, '/views/alert.html'),
-            protocol: 'file:',
-            slashes: true
-        }));
-
-        // Emitted when the window is closed.
-        alertWindow.on('closed', function () {
-            // Dereference the window object, usually you would store windows
-            // in an array if your app supports multi windows, this is the time
-            // when you should delete the corresponding element.
-            alertWindow = null
-        });
-        alertWindow.setMenu(null);
-
-        alertWindow.once('ready-to-show', () => {
-            resolve(true);
-        });
     });
 }
 
@@ -284,41 +258,3 @@ ipcMain.on('remindersChanged', (event, remindersType) => {
         loopReminders(remindersType);
     }
 });
-
-ipcMain.on('triggerAlert', (event, alertText) => {
-    createAlertWindow().then(function (windowReady) {
-        alertWindow.webContents.send('alertMessage', alertText);
-        alertWindow.show();
-        setTimeout(function () {
-            alertWindow.close();
-        }, 3000);
-
-    });
-});
-
-
-// code for messaging between renderer and app
-
-// Listen for async message from renderer process
-/*ipcMain.on('async', (event, arg) => {
-    // Print 1
-    console.log(arg);
-    // Reply on async message from renderer process
-    event.sender.send('async-reply', 2);
-});
-
-// Listen for sync message from renderer process
-ipcMain.on('sync', (event, arg) => {
-    // Print 3
-    console.log(arg);
-    // Send value synchronously back to renderer process
-    event.returnValue = 4;
-    // Send async message to renderer process
-    mainWindow.webContents.send('ping', 5);
-});
-
-// Make method externaly visible
-exports.pong = arg => {
-    //Print 6
-    console.log(arg);
-}*/
