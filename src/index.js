@@ -176,30 +176,3 @@ ipcRenderer.on('reminderNotify', (event, arg) => {
     let notificationTitle = "You've helped " + arg + " people today!";
     WindowsNotifications.notify(notificationTitle, "Keep on punching!", "owl_ico_64.png", 2000)
 });
-
-// messaging to main
-/*
-// Send async message to main process
-ipcRenderer.send('async', 1);
-
-// Listen for async-reply message from main process
-ipcRenderer.on('async-reply', (event, arg) => {
-    // Print 2
-    console.log(arg);
-    // Send sync message to main process
-    let mainValue = ipcRenderer.sendSync('sync', 3);
-    // Print 4
-    console.log(mainValue);
-});
-
-// Listen for main message
-ipcRenderer.on('ping', (event, arg) => {
-    // Print 5
-    console.log(arg);
-    // Invoke method directly on main process
-    main.pong(6);
-});
-
-ipcRenderer.on('store-data', function (store) {
-    console.log(store);
-});*/

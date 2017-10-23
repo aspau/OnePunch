@@ -67,8 +67,8 @@ function createSplashScreen() {
 
 function createRemindersWindow() {
     remindersWindow = new BrowserWindow({
-        width: 350,
-        height: 500,
+        width: 310,
+        height: 370,
         resizable: false,
         show: true,
         center: true,
@@ -88,12 +88,12 @@ function createRemindersWindow() {
     remindersWindow.on('closed', function () {
         remindersWindow = null
     });
-    settingsWindow.setMenu(null);
+    remindersWindow.setMenu(null);
 }
 
 function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
-        width: 380,
+        width: 350,
         height: 700,
         //resizable: false,
         show: true,
@@ -115,13 +115,13 @@ function createSettingsWindow() {
     settingsWindow.on('closed', function () {
         settingsWindow = null
     });
-    //settingsWindow.setMenu(null);
+    settingsWindow.setMenu(null);
 }
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
-        width: 380,
-        height: 750,
+        width: 350,
+        height: 800,
         //resizable: false,
         show: false,
         center: true,
@@ -170,7 +170,7 @@ function createMainWindow() {
     mainWindow.on('closed', function () {
         mainWindow = null
     });
-    //mainWindow.setMenu(null);
+    mainWindow.setMenu(null);
 }
 
 // This method will be called when Electron has finished
@@ -219,9 +219,9 @@ function genReminders(reminderType) {
 }
 
 function loopReminders(reminderType) {
-    /*let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
-    let reminderLagMs = 1000 * 60 * reminderLagMinutes;*/
-    let reminderLagMs = 1000 * 10;
+    let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
+    let reminderLagMs = 1000 * reminderLagMinutes;
+    console.log(reminderLagMinutes);
     remindersTimeout = setTimeout(function () {
         genReminders(reminderType)
         loopReminders(reminderType);
@@ -244,18 +244,19 @@ ipcMain.on('settingsComplete', (event, arg) => {
 });
 
 ipcMain.on('remindersChanged', (event, remindersType) => {
-    clearTimeout(remindersTimeout);
-    console.log(remindersType);
+    if (remindersTimeout) {
+        clearTimeout(remindersTimeout);
+    }
     if (remindersType) {
         loopReminders(remindersType);
     }
 });
 
-/*
+
 // code for messaging between renderer and app
 
 // Listen for async message from renderer process
-ipcMain.on('async', (event, arg) => {
+/*ipcMain.on('async', (event, arg) => {
     // Print 1
     console.log(arg);
     // Reply on async message from renderer process
@@ -276,22 +277,4 @@ ipcMain.on('sync', (event, arg) => {
 exports.pong = arg => {
     //Print 6
     console.log(arg);
-}
-
-// code for auto-launching
-const onePunchAutoLauncher = new AutoLaunch({
-    name: 'OnePunch',
-    path: '/Applications/OnePunch.app',
-});
-
-onePunchAutoLauncher.isEnabled()
-    .then(function (isEnabled) {
-        if (isEnabled) {
-            return;
-        }
-        onePunchAutoLauncher.enable();
-    })
-    .catch(function (err) {
-        // handle error
-    })
-*/
+}*/

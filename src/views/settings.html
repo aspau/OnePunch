@@ -10,7 +10,7 @@
 
 <body>
     <div class="ui grid middle aligned centered">
-        <div class="sixteen wide column">
+        <div class="fourteen wide column">
             <h2>Log Folder</h2>
         </div>
         <div class="twelve wide column">
@@ -20,7 +20,7 @@
             <button id="logPicker" class="ui primary button fluid">Choose</button>
         </div>
         <input id="logPath" type="hidden" name="userSetting" value="">
-        <div class="sixteen wide column">
+        <div class="fourteen wide column">
             <h2>HotKey</h2>
         </div>
         <div class="twelve wide column">
@@ -36,8 +36,9 @@
                 <input type="radio" name="hotKey" value="Ctrl+Alt+F9" id="ctrlAltF9" class="ui radio checkbox">
                 <label for="ctrlAltF9">Ctrl + Alt + F9</label>
             </div>
+            <input id="currentHotKey" type="hidden" name="userSetting" value="">
         </div>
-        <div class="sixteen wide column">
+        <div class="fourteen wide column">
             <h2>Reminders</h2>
         </div>
         <div class="twelve wide column">
@@ -51,10 +52,10 @@
             </div>
             <div class="field">
                 <input type="radio" name="reminders" value="popups" id="popUpReminders" class="ui radio checkbox">
-                <label for="ctrlAltF9">popUpReminders</label>
+                <label for="ctrlAltF9">Pop-Ups</label>
             </div>
         </div>
-        <div class="sixteen wide column">
+        <div class="fourteen wide column">
             <h2>Desk</h2>
         </div>
         <div class="twelve wide column">
@@ -63,7 +64,7 @@
             </div>
         </div>
         <div class="twelve wide column">
-            <button id="saveBtn" class="fluid ui blue button">Save</button>
+            <button id="saveBtn" class="fluid ui purple button">Save</button>
         </div>
     </div>
     <script>
