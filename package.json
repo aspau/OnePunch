@@ -9,8 +9,12 @@
         "pack": "electron-builder --dir",
         "dist": "electron-builder"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aspau/OnePunch.git"
+    },
     "keywords": [],
-    "author": "ASPApp",
+    "author": "aspau",
     "license": "MIT",
     "dependencies": {
         "auto-launch": "^5.0.1",
