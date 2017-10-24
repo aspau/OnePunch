@@ -1,6 +1,6 @@
 {
     "name": "onepunch",
-    "productName": "One Punch",
+    "productName": "OnePunch",
     "version": "0.9.0",
     "description": "A logger for patron interactions",
     "main": "src/main.js",
@@ -13,7 +13,6 @@
         "type": "git",
         "url": "git+https://github.com/aspau/OnePunch.git"
     },
-    "keywords": [],
     "author": "aspau",
     "license": "MIT",
     "dependencies": {
@@ -23,7 +22,7 @@
 
     "build": {
         "appId": "com.electron.onepunch",
-        "productName": "One Punch",
+        "productName": "OnePunch",
         "directories": {
             "buildResources": "src/build"
         },
