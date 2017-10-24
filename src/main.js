@@ -38,6 +38,20 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+let shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  }
+});
+
+if (shouldQuit) {
+  app.quit();
+  return;
+}
+
+
 function createSplashScreen() {
     let splashScreen;
     // Create the browser window.
@@ -227,8 +241,8 @@ function genReminders(reminderType) {
 }
 
 function loopReminders(reminderType) {
-    let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
-    let reminderLagMs = 1000 * reminderLagMinutes;
+    let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
+    let reminderLagMs = 1000 * 60 * reminderLagMinutes;
     remindersTimeout = setTimeout(function () {
         genReminders(reminderType)
         loopReminders(reminderType);

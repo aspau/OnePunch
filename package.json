@@ -1,7 +1,7 @@
 {
     "name": "onepunch",
     "productName": "One Punch",
-    "version": "1.0.0",
+    "version": "0.9.0",
     "description": "A logger for patron interactions",
     "main": "src/main.js",
     "scripts": {
@@ -10,25 +10,25 @@
         "dist": "electron-builder"
     },
     "keywords": [],
-    "author": "Liam",
+    "author": "ASPApp",
     "license": "MIT",
     "dependencies": {
         "auto-launch": "^5.0.1",
         "electron-settings": "^3.1.3"
     },
 
-    build: {
+    "build": {
         "appId": "com.electron.onepunch",
         "productName": "One Punch",
         "directories": {
             "buildResources": "src/build"
         },
+        "icon": "src/build/icon.ico",
         "nsis": {
             "installerIcon": "src/images/owl_ico.ico",
             "uninstallerIcon": "src/images/owl_ico.ico"
-        },
+        }
     },
-
     "devDependencies": {
         "electron": "~1.7.8",
         "electron-builder": "^19.37.2",
