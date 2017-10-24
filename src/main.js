@@ -106,8 +106,8 @@ function createRemindersWindow() {
 function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 350,
-        height: 800,
-        //resizable: false,
+        height: 850,
+        resizable: false,
         show: true,
         center: true,
         maximizable: false,
@@ -130,7 +130,7 @@ function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 350,
         height: 800,
-        //resizable: false,
+        resizable: false,
         show: false,
         center: true,
         maximizable: false,
