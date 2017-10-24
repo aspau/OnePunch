@@ -243,6 +243,8 @@ function genReminders(reminderType) {
 function loopReminders(reminderType) {
     let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
     let reminderLagMs = 1000 * 60 * reminderLagMinutes;
+    //let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
+    //let reminderLagMs = 1000 * reminderLagMinutes;
     remindersTimeout = setTimeout(function () {
         genReminders(reminderType)
         loopReminders(reminderType);
