@@ -181,6 +181,11 @@ document.getElementById("saveBtn").addEventListener("click", function () {
 
 
 ipcRenderer.on('reminderNotify', (event, arg) => {
-    let notificationTitle = "You've helped " + arg + " people today!";
-    WindowsNotifications.notify(notificationTitle, "Keep on punching!", "owl_ico_64.png", 2000)
+    if (arg !== false) {
+        let notificationTitle = "You've helped " + arg + " people today!";
+        WindowsNotifications.notify(notificationTitle, "Keep on punching!", "owl_ico_64.png", 2000)
+    } else {
+        WindowsNotifications.notify("Cannot connect!", "Please connect to network drive", "exclamation_mark_64.png", 3500);
+    }
+
 });
