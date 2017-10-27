@@ -67,6 +67,16 @@ SettingsScript.getSetting().then(function (returnedSettings) {
         }
     });
     document.getElementById("currentHotKey").value = hotKey;
+    MoveLocalText.moveText().then(function (logsMoved) {
+        if (logsMoved !== false) {
+            if (logsMoved > 0) {
+                let notifyMessage = "Moved " + logsMoved + " logs from local storage to shared file";
+                WindowsNotifications.notify("Update!", notifyMessage, "owl_ico_64.png", 3500);
+            }
+        } else {
+            WindowsNotifications.notify("Cannot connect!", "Logs will save locally until connected to network drive", "exclamation_mark_64.png", 3500);
+        }
+    });
 });
 
 
@@ -74,7 +84,19 @@ document.getElementById("logBtn").addEventListener("click", function () {
     LogText.logText();
 });
 document.getElementById("moveLocalBtn").addEventListener("click", function () {
-    MoveLocalText.moveText();
+    MoveLocalText.moveText().then(function (logsMoved) {
+        if (logsMoved !== false) {
+            if (logsMoved > 0) {
+                let notifyMessage = "Moved " + logsMoved + " logs from local storage to shared file";
+                WindowsNotifications.notify("Update!", notifyMessage, "owl_ico_64.png", 3500);
+            } else {
+                let notifyMessage = "No local logs to move";
+                WindowsNotifications.notify("Update!", notifyMessage, "owl_ico_64.png", 3500);
+            }
+        } else {
+            WindowsNotifications.notify("Cannot connect!", "Logs will save locally until connected to network drive", "exclamation_mark_64.png", 3500);
+        }
+    });
 });
 document.getElementById("generateReportBtn").addEventListener("click", function () {
     let showDetailByDesk = document.getElementById("deskCheck").checked;
@@ -88,8 +110,6 @@ document.getElementById("generateReportBtn").addEventListener("click", function 
         alert("Please choose report parameters");
     }
 });
-
-MoveLocalText.moveText();
 
 var startPicker = new Pikaday({
     field: document.getElementById('startDate'),

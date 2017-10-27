@@ -144,7 +144,7 @@ function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 350,
         height: 800,
-        resizable: false,
+        //resizable: false,
         show: false,
         center: true,
         maximizable: false,
@@ -192,7 +192,7 @@ function createMainWindow() {
     mainWindow.on('closed', function () {
         mainWindow = null
     });
-    mainWindow.setMenu(null);
+    //mainWindow.setMenu(null);
 }
 
 // This method will be called when Electron has finished
