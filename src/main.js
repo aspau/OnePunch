@@ -21,8 +21,8 @@ const appFolder = path.dirname(process.execPath)
 const exeName = path.basename(process.execPath)
 
 app.setLoginItemSettings({
-  openAtLogin: true,
-  args: [
+    openAtLogin: true,
+    args: [
     '--processStart', `"${exeName}"`,
     '--process-start-args', `"--hidden"`
   ]
@@ -38,17 +38,17 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-let shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-  // Someone tried to run a second instance, we should focus our window.
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.focus();
-  }
+let shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
+    }
 });
 
 if (shouldQuit) {
-  app.quit();
-  return;
+    app.quit();
+    return;
 }
 
 
@@ -167,6 +167,12 @@ function createMainWindow() {
             }
                 },
         {
+            label: 'How are we doing today?',
+            click: function () {
+                genReminders("notifications");
+            }
+                },
+        {
             label: 'Quit',
             click: function () {
                 app.isQuiting = true;
@@ -273,4 +279,8 @@ ipcMain.on('remindersChanged', (event, remindersType) => {
     if (remindersType == "notifications" || remindersType == "popups") {
         loopReminders(remindersType);
     }
+});
+
+ipcMain.on('getCurrentCount', (event) => {
+    createRemindersWindow();
 });

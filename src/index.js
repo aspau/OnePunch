@@ -85,6 +85,10 @@ SettingsScript.getSetting().then(function (returnedSettings) {
 document.getElementById("logBtn").addEventListener("click", function () {
     LogText.logText();
 });
+document.getElementById("checkTotalsBtn").addEventListener("click", function () {
+    ipcRenderer.send('getCurrentCount');
+});
+
 document.getElementById("moveLocalBtn").addEventListener("click", function () {
     MoveLocalText.moveText().then(function (logsMoved) {
         if (logsMoved !== false) {
