@@ -9,8 +9,10 @@ const self = module.exports = {
                 const deskName = returnedSettings.deskName;
                 const logPath = returnedSettings.logPath.primary;
                 const secondaryLogPath = returnedSettings.logPath.secondary;
+                const tertiaryLogPath = returnedSettings.logPath.tertiary;
                 const primary = logPath + "\\op_log.txt";
                 const secondary = secondaryLogPath + "\\op_log.txt";
+                const tertiary = tertiaryLogPath + "\\op_log.txt";
                 const current = new Date();
                 const currentMonth = current.getMonth() + 1;
                 const currentDate = current.getDate();
@@ -27,8 +29,26 @@ const self = module.exports = {
                         console.log(err);
                         fs.readFile(secondary, "utf8", (err, data) => {
                             if (err) {
-                                console.log(err)
-                                resolve(false);
+                                fs.readFile(tertiary, "utf8", (err, data) => {
+                                    if (err) {
+                                        console.log(err)
+                                        resolve(false);
+                                    } else {
+                                        const logArray = data.split("\n");
+                                        for (i = 0; i < logArray.length - 1; i++) {
+                                            logEntryArray = logArray[i].split(",");
+                                            logDate = logEntryArray[1];
+                                            logDesk = logEntryArray[3];
+                                            logDesk = logDesk.trim();
+                                            if (logDate == matchDateString && logDesk == deskName) {
+                                                punchesCounter += 1;
+                                            }
+                                            if (i == logArray.length - 2) {
+                                                resolve(punchesCounter);
+                                            }
+                                        }
+                                    }
+                                });
                             } else {
                                 const logArray = data.split("\n");
                                 for (i = 0; i < logArray.length - 1; i++) {

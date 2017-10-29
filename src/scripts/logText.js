@@ -8,6 +8,7 @@ module.exports = {
             const logPath = returnedSettings.logPath.primary;
             const deskName = returnedSettings.deskName;
             const secondaryLogPath = returnedSettings.logPath.secondary;
+            const tertiaryLogPath = returnedSettings.logPath.tertiary;
             const weekday = new Array(7);
             weekday[0] = "Sun";
             weekday[1] = "Mon";
@@ -35,6 +36,7 @@ module.exports = {
             const logText = currentWeekday + "," + currentMonth + "/" + currentDateString + "/" + currentYear + "," + currentHour + ":" + currentMinuteString + "," + deskName + '\r\n';
             const primary = logPath + "\\op_log.txt";
             const secondary = secondaryLogPath + "\\op_log.txt";
+            const tertiary = tertiaryLogPath + "\\op_log.txt";
             fs.writeFile(
                 primary,
                 logText, {
@@ -51,20 +53,33 @@ module.exports = {
                             },
                             function (err) {
                                 if (err) {
-                                    SettingsScript.getSetting('localLogs').then(function (localLogs) {
-                                        if (localLogs) {
-                                            localLogs.push(logText);
-                                            SettingsScript.saveSetting('localLogs', localLogs);
-                                            WindowsNotifications.notify("Logged locally!", "Please connect to shared drive.", "exclamation_mark_64.png", 3500);
-                                            return logText;
-                                        } else {
-                                            localLogs = [];
-                                            localLogs.push(logText);
-                                            SettingsScript.saveSetting('localLogs', localLogs);
-                                            WindowsNotifications.notify("Logged locally!", "Please connect to shared drive.", "exclamation_mark_64.png", 3500);
-                                            return logText;
-                                        }
-                                    });
+                                    fs.writeFile(
+                                        tertiary,
+                                        logText, {
+                                            encoding: "UTF-8",
+                                            flag: "a"
+                                        },
+                                        function (err) {
+                                            if (err) {
+                                                SettingsScript.getSetting('localLogs').then(function (localLogs) {
+                                                    if (localLogs) {
+                                                        localLogs.push(logText);
+                                                        SettingsScript.saveSetting('localLogs', localLogs);
+                                                        WindowsNotifications.notify("Logged locally!", "Please connect to shared drive.", "exclamation_mark_64.png", 3500);
+                                                        return logText;
+                                                    } else {
+                                                        localLogs = [];
+                                                        localLogs.push(logText);
+                                                        SettingsScript.saveSetting('localLogs', localLogs);
+                                                        WindowsNotifications.notify("Logged locally!", "Please connect to shared drive.", "exclamation_mark_64.png", 3500);
+                                                        return logText;
+                                                    }
+                                                });
+                                            } else {
+                                                WindowsNotifications.notify("Logged!", "Logged to shared drive!", "owl_ico_64.png", 2000)
+                                                return logText;
+                                            }
+                                        });
                                 } else {
                                     WindowsNotifications.notify("Logged!", "Logged to shared drive!", "owl_ico_64.png", 2000)
                                     return logText;

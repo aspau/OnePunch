@@ -1,6 +1,5 @@
 const fs = require('fs');
 const SettingsScript = require('./settings_script')
-
 const self = module.exports = {
     parseFileToObjects: function (startDate, endDate, showDetailByDesk, showDetailByHour) {
         return new Promise(function (resolve, reject) {
@@ -11,16 +10,47 @@ const self = module.exports = {
                 jsEndDate.setTime(offsetMs);
                 const logPath = returnedSettings.logPath.primary;
                 const secondaryLogPath = returnedSettings.logPath.secondary;
+                const tertiaryLogPath = returnedSettings.logPath.tertiary;
                 const primary = logPath + "\\op_log.txt";
                 const secondary = secondaryLogPath + "\\op_log.txt";
+                const tertiary = tertiaryLogPath + "\\op_log.txt";
                 let objectArray = [];
                 let logObj = {};
                 fs.readFile(primary, "utf8", (err, data) => {
                     if (err) {
                         fs.readFile(secondary, "utf8", (err, data) => {
                             if (err) {
-                                console.log(err)
-                                resolve(false);
+                                fs.readFile(tertiary, "utf8", (err, data) => {
+                                    if (err) {
+                                        console.log(err)
+                                        resolve(false);
+                                    } else {
+                                        const logArray = data.split("\n");
+                                        for (i = 0; i < logArray.length - 1; i++) {
+                                            logEntryArray = logArray[i].split(",");
+                                            logObj = {};
+                                            logObj.day = logEntryArray[0];
+                                            logObj.date = logEntryArray[1];
+                                            logObj.time = logEntryArray[2];
+                                            logObj.desk = logEntryArray[3];
+                                            logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
+                                            logObj.jsDate = new Date(logDateTimeString);
+                                            logObj.hour = logObj.jsDate.getHours();
+                                            logObj.count = 1;
+                                            sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
+                                            logObj.sortString = sortString;
+                                            if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
+                                                objectArray.push(logObj);
+                                            }
+                                            if (i == logArray.length - 2) {
+                                                objectArray.sort(function (a, b) {
+                                                    return a.sortString - b.sortString;
+                                                });
+                                                resolve(objectArray);
+                                            }
+                                        }
+                                    }
+                                });
                             } else {
                                 const logArray = data.split("\n");
                                 for (i = 0; i < logArray.length - 1; i++) {
