@@ -21,8 +21,8 @@ const appFolder = path.dirname(process.execPath)
 const exeName = path.basename(process.execPath)
 
 app.setLoginItemSettings({
-  openAtLogin: true,
-  args: [
+    openAtLogin: true,
+    args: [
     '--processStart', `"${exeName}"`,
     '--process-start-args', `"--hidden"`
   ]
@@ -38,17 +38,17 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-let shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-  // Someone tried to run a second instance, we should focus our window.
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.focus();
-  }
+let shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
+    }
 });
 
 if (shouldQuit) {
-  app.quit();
-  return;
+    app.quit();
+    return;
 }
 
 
@@ -167,6 +167,12 @@ function createMainWindow() {
             }
                 },
         {
+            label: 'How are we doing today?',
+            click: function () {
+                genReminders("notifications");
+            }
+                },
+        {
             label: 'Quit',
             click: function () {
                 app.isQuiting = true;
@@ -241,10 +247,10 @@ function genReminders(reminderType) {
 }
 
 function loopReminders(reminderType) {
-    //let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
-    //let reminderLagMs = 1000 * 60 * reminderLagMinutes;
-    let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
-    let reminderLagMs = 1000 * reminderLagMinutes;
+    let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
+    let reminderLagMs = 1000 * 60 * reminderLagMinutes;
+    //let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
+    //let reminderLagMs = 1000 * reminderLagMinutes;
     remindersTimeout = setTimeout(function () {
         genReminders(reminderType)
         loopReminders(reminderType);
@@ -273,4 +279,8 @@ ipcMain.on('remindersChanged', (event, remindersType) => {
     if (remindersType == "notifications" || remindersType == "popups") {
         loopReminders(remindersType);
     }
+});
+
+ipcMain.on('getCurrentCount', (event) => {
+    createRemindersWindow();
 });

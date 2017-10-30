@@ -48,7 +48,7 @@ document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
 // load data and change settings tab to match current settings
 
 SettingsScript.getSetting().then(function (returnedSettings) {
-    const logPath = returnedSettings.logPath.primary;
+    const logPath = returnedSettings.logPath.display;
     const hotKey = returnedSettings.hotKey;
     const deskName = returnedSettings.deskName;
     const reminders = returnedSettings.reminders;
@@ -66,7 +66,9 @@ SettingsScript.getSetting().then(function (returnedSettings) {
             radioBtn.checked = true;;
         }
     });
+
     document.getElementById("currentHotKey").value = hotKey;
+
     MoveLocalText.moveText().then(function (logsMoved) {
         if (logsMoved !== false) {
             if (logsMoved > 0) {
@@ -83,6 +85,10 @@ SettingsScript.getSetting().then(function (returnedSettings) {
 document.getElementById("logBtn").addEventListener("click", function () {
     LogText.logText();
 });
+document.getElementById("checkTotalsBtn").addEventListener("click", function () {
+    ipcRenderer.send('getCurrentCount');
+});
+
 document.getElementById("moveLocalBtn").addEventListener("click", function () {
     MoveLocalText.moveText().then(function (logsMoved) {
         if (logsMoved !== false) {
@@ -190,6 +196,8 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                 }).then(function (settingSaved) {
                     globalShortcut.unregister(currentHotKey);
                     setHotKey(hotKeyChoice);
+                }).then(function (settingSaved) {
+                    alert("Settings saved!");
                 }).catch(function (error) {
                     console.log("Failed!", error);
                 });
