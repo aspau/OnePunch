@@ -161,12 +161,42 @@ var endPicker = new Pikaday({
 
 // add listeners to page elements
 
+
+// -- change auth flow stuff starts here with the functionality of new buttons
+
 document.getElementById("logPicker").addEventListener("click", function () {
     FileDialog.getFolder().then(function (chosenDir) {
         document.getElementById('logFolderName').textContent = chosenDir;
         document.getElementById("logPath").value = chosenDir;
     });
 });
+
+document.getElementById("googlePicker").addEventListener("click", function () {
+    FileDialog.getFolder().then(function (chosenDir) {
+        document.getElementById('logFolderName').textContent = chosenDir;
+        document.getElementById("logPath").value = chosenDir;
+    });
+});
+
+document.getElementById("msPicker").addEventListener("click", function () {
+    FileDialog.getFolder().then(function (chosenDir) {
+        document.getElementById('logFolderName').textContent = chosenDir;
+        document.getElementById("logPath").value = chosenDir;
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 document.getElementById("savePicker").addEventListener("click", function () {
     FileDialog.getFolder().then(function (chosenDir) {
