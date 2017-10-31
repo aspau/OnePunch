@@ -1,120 +1,131 @@
 const fs = require('fs');
 const SettingsScript = require('./settings_script')
 const self = module.exports = {
-    parseFileToObjects: function (startDate, endDate, showDetailByDesk, showDetailByHour) {
+    parseNetworkFileToObjects: function (startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings) {
         return new Promise(function (resolve, reject) {
-            SettingsScript.getSetting().then(function (returnedSettings) {
-                const jsStartDate = new Date(startDate);
-                const jsEndDate = new Date(endDate);
-                const offsetMs = jsEndDate.getTime() + (1000 * 60 * 60 * 24);
-                jsEndDate.setTime(offsetMs);
-                const logPath = returnedSettings.logPath.primary;
-                const secondaryLogPath = returnedSettings.logPath.secondary;
-                const tertiaryLogPath = returnedSettings.logPath.tertiary;
-                const primary = logPath + "\\op_log.txt";
-                const secondary = secondaryLogPath + "\\op_log.txt";
-                const tertiary = tertiaryLogPath + "\\op_log.txt";
-                let objectArray = [];
-                let logObj = {};
-                fs.readFile(primary, "utf8", (err, data) => {
-                    if (err) {
-                        fs.readFile(secondary, "utf8", (err, data) => {
-                            if (err) {
-                                fs.readFile(tertiary, "utf8", (err, data) => {
-                                    if (err) {
-                                        console.log(err)
-                                        resolve(false);
-                                    } else {
-                                        const logArray = data.split("\n");
-                                        for (i = 0; i < logArray.length - 1; i++) {
-                                            logEntryArray = logArray[i].split(",");
-                                            logObj = {};
-                                            logObj.day = logEntryArray[0];
-                                            logObj.date = logEntryArray[1];
-                                            logObj.time = logEntryArray[2];
-                                            logObj.desk = logEntryArray[3];
-                                            logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
-                                            logObj.jsDate = new Date(logDateTimeString);
-                                            logObj.hour = logObj.jsDate.getHours();
-                                            logObj.count = 1;
-                                            sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
-                                            logObj.sortString = sortString;
-                                            if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
-                                                objectArray.push(logObj);
-                                            }
-                                            if (i == logArray.length - 2) {
-                                                objectArray.sort(function (a, b) {
-                                                    return a.sortString - b.sortString;
-                                                });
-                                                resolve(objectArray);
-                                            }
+            const jsStartDate = new Date(startDate);
+            const jsEndDate = new Date(endDate);
+            const offsetMs = jsEndDate.getTime() + (1000 * 60 * 60 * 24);
+            jsEndDate.setTime(offsetMs);
+            const logPath = returnedSettings.logPath.primary;
+            const secondaryLogPath = returnedSettings.logPath.secondary;
+            const tertiaryLogPath = returnedSettings.logPath.tertiary;
+            const primary = logPath + "\\op_log.txt";
+            const secondary = secondaryLogPath + "\\op_log.txt";
+            const tertiary = tertiaryLogPath + "\\op_log.txt";
+            let objectArray = [];
+            let logObj = {};
+            fs.readFile(primary, "utf8", (err, data) => {
+                if (err) {
+                    fs.readFile(secondary, "utf8", (err, data) => {
+                        if (err) {
+                            fs.readFile(tertiary, "utf8", (err, data) => {
+                                if (err) {
+                                    console.log(err)
+                                    resolve(false);
+                                } else {
+                                    const logArray = data.split("\n");
+                                    for (i = 0; i < logArray.length - 1; i++) {
+                                        logEntryArray = logArray[i].split(",");
+                                        logObj = {};
+                                        logObj.day = logEntryArray[0];
+                                        logObj.date = logEntryArray[1];
+                                        logObj.time = logEntryArray[2];
+                                        logObj.desk = logEntryArray[3];
+                                        logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
+                                        logObj.jsDate = new Date(logDateTimeString);
+                                        logObj.hour = logObj.jsDate.getHours();
+                                        logObj.count = 1;
+                                        sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
+                                        logObj.sortString = sortString;
+                                        if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
+                                            objectArray.push(logObj);
+                                        }
+                                        if (i == logArray.length - 2) {
+                                            objectArray.sort(function (a, b) {
+                                                return a.sortString - b.sortString;
+                                            });
+                                            resolve(objectArray);
                                         }
                                     }
-                                });
-                            } else {
-                                const logArray = data.split("\n");
-                                for (i = 0; i < logArray.length - 1; i++) {
-                                    logEntryArray = logArray[i].split(",");
-                                    logObj = {};
-                                    logObj.day = logEntryArray[0];
-                                    logObj.date = logEntryArray[1];
-                                    logObj.time = logEntryArray[2];
-                                    logObj.desk = logEntryArray[3];
-                                    logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
-                                    logObj.jsDate = new Date(logDateTimeString);
-                                    logObj.hour = logObj.jsDate.getHours();
-                                    logObj.count = 1;
-                                    sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
-                                    logObj.sortString = sortString;
-                                    if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
-                                        objectArray.push(logObj);
-                                    }
-                                    if (i == logArray.length - 2) {
-                                        objectArray.sort(function (a, b) {
-                                            return a.sortString - b.sortString;
-                                        });
-                                        resolve(objectArray);
-                                    }
+                                }
+                            });
+                        } else {
+                            const logArray = data.split("\n");
+                            for (i = 0; i < logArray.length - 1; i++) {
+                                logEntryArray = logArray[i].split(",");
+                                logObj = {};
+                                logObj.day = logEntryArray[0];
+                                logObj.date = logEntryArray[1];
+                                logObj.time = logEntryArray[2];
+                                logObj.desk = logEntryArray[3];
+                                logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
+                                logObj.jsDate = new Date(logDateTimeString);
+                                logObj.hour = logObj.jsDate.getHours();
+                                logObj.count = 1;
+                                sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
+                                logObj.sortString = sortString;
+                                if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
+                                    objectArray.push(logObj);
+                                }
+                                if (i == logArray.length - 2) {
+                                    objectArray.sort(function (a, b) {
+                                        return a.sortString - b.sortString;
+                                    });
+                                    resolve(objectArray);
                                 }
                             }
-                        });
-                    } else {
-                        const logArray = data.split("\n");
-                        for (i = 0; i < logArray.length - 1; i++) {
-                            logEntryArray = logArray[i].split(",");
-                            logObj = {};
-                            logObj.day = logEntryArray[0];
-                            logObj.date = logEntryArray[1];
-                            logObj.time = logEntryArray[2];
-                            logObj.desk = logEntryArray[3];
-                            logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
-                            logObj.jsDate = new Date(logDateTimeString);
-                            logObj.hour = logObj.jsDate.getHours();
-                            logObj.count = 1;
-                            sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
-                            logObj.sortString = sortString;
-                            if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
-                                objectArray.push(logObj);
-                            }
-                            if (i == logArray.length - 2) {
-                                objectArray.sort(function (a, b) {
-                                    if (a.sortString > b.sortString) {
-                                        return 1;
-                                    } else if (a.sortString < b.sortString) {
-                                        return -1;
-                                    } else {
-                                        return 0;
-                                    }
-                                });
+                        }
+                    });
+                } else {
+                    const logArray = data.split("\n");
+                    for (i = 0; i < logArray.length - 1; i++) {
+                        logEntryArray = logArray[i].split(",");
+                        logObj = {};
+                        logObj.day = logEntryArray[0];
+                        logObj.date = logEntryArray[1];
+                        logObj.time = logEntryArray[2];
+                        logObj.desk = logEntryArray[3];
+                        logDateTimeString = logEntryArray[1] + " " + logEntryArray[2];
+                        logObj.jsDate = new Date(logDateTimeString);
+                        logObj.hour = logObj.jsDate.getHours();
+                        logObj.count = 1;
+                        sortString = self.sortObj(logObj.jsDate, logObj.desk, showDetailByDesk, showDetailByHour);
+                        logObj.sortString = sortString;
+                        if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
+                            objectArray.push(logObj);
+                        }
+                        if (i == logArray.length - 2) {
+                            objectArray.sort(function (a, b) {
+                                if (a.sortString > b.sortString) {
+                                    return 1;
+                                } else if (a.sortString < b.sortString) {
+                                    return -1;
+                                } else {
+                                    return 0;
+                                }
+                            });
 
-                                resolve(objectArray);
-                            }
+                            resolve(objectArray);
                         }
                     }
-                });
+                }
             });
         });
     },
+
+    parseGoogleFileToObjects: function (startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings) {
+        return new Promise(function (resolve, reject) {
+            resolve(true);
+        });
+    },
+
+    parseOfficeFileToObjects: function (startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings) {
+        return new Promise(function (resolve, reject) {
+            resolve(true);
+        });
+    },
+
     processObjectsToTotals: function (objectArray, showDetailByDesk, showDetailByHour) {
         return new Promise(function (resolve, reject) {
             let totalsArray = [];
@@ -268,16 +279,23 @@ const self = module.exports = {
 
     generateReport: function (startDate, endDate, showDetailByDesk, showDetailByHour, savePath) {
         return new Promise(function (resolve, reject) {
-            self.parseFileToObjects(startDate, endDate, showDetailByDesk, showDetailByHour)
-                .then(function (objectArray) {
-                    return self.processObjectsToTotals(objectArray, showDetailByDesk, showDetailByHour)
-                        .then(function (totalsArray) {
-                            return self.writeTotalsToCsv(totalsArray, savePath, showDetailByDesk, showDetailByHour, startDate, endDate);
-                        }).then(function (reportingComplete) {
-                            resolve(reportingComplete);
-                        }).catch(function (error) {
-                            console.log("Failed!", error);
-                        });
+            SettingsScript.getSetting()
+                .then(function (returnedSettings) {
+                    if (returnedSettings.logStrategy === "network") {
+                        return self.parseNetworkFileToObjects(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
+                    } else if (returnedSettings.logStrategy === "google") {
+                        return self.parseGoogleFileToObjects(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
+                    } else if (returnedSettings.logStrategy === "office") {
+                        return self.parseOfficeFileToObjects(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
+                    }
+                }).then(function (objectArray) {
+                    return self.processObjectsToTotals(objectArray, showDetailByDesk, showDetailByHour);
+                }).then(function (totalsArray) {
+                    return self.writeTotalsToCsv(totalsArray, savePath, showDetailByDesk, showDetailByHour, startDate, endDate);
+                }).then(function (reportingComplete) {
+                    resolve(reportingComplete);
+                }).catch(function (error) {
+                    console.log("Failed!", error);
                 });
         });
     },
