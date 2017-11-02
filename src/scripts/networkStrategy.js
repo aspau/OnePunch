@@ -4,7 +4,7 @@ const SaveLocalLog = require("./saveLocalLog");
 const SettingsScript = require('./settings_script');
 
 module.exports = {
-    addLogLocation: function (folderLocation) {
+    getLogLocation: function (folderLocation) {
         return new Promise(function (resolve, reject) {
             const logPath = {};
             logPath.display = folderLocation;

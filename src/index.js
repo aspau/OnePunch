@@ -3,7 +3,7 @@ const LogText = require("./scripts/logText");
 const MoveLocalText = require("./scripts/moveLocalText");
 const Reports = require("./scripts/reporting");
 const SettingsScript = require("./scripts/settings_script");
-const AddLogLocations = require("./scripts/addLogLocations");
+const GetLogLocations = require("./scripts/getLogLocations");
 const FileDialog = require("./scripts/getFileDialog");
 const Pikaday = require("./scripts/pikaday");
 const WindowsNotifications = require("./scripts/windowsNotifications");
@@ -54,6 +54,7 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     const hotKey = returnedSettings.hotKey;
     const deskName = returnedSettings.deskName;
     const reminders = returnedSettings.reminders;
+    const logStrategy = returnedSettings.logStrategy;
     setHotKey(hotKey);
     document.getElementById("deskPicker").value = deskName;
     document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
@@ -67,13 +68,11 @@ SettingsScript.getSetting().then(function (returnedSettings) {
         }
     });
     document.getElementById("currentHotKey").value = hotKey;
-
-    //******* This needs to change to reflect varying log option page content setting display
     const logPath = returnedSettings.logPath.display;
-    document.getElementById("logPath").value = logPath;
+    const logPathValue = returnedSettings.logPath.primary
+    document.getElementById("logPath").value = logPathValue;
+    document.getElementById("logStrategy").value = logStrategy;
     document.getElementById('logFolderName').textContent = logPath;
-    //*******
-
     MoveLocalText.moveText().then(function (logsMoved) {
         if (logsMoved !== false) {
             if (logsMoved > 0) {
@@ -169,10 +168,11 @@ var endPicker = new Pikaday({
 
 // -- change auth flow stuff starts here with the functionality of new buttons
 
-document.getElementById("logPicker").addEventListener("click", function () {
+document.getElementById("networkPicker").addEventListener("click", function () {
     FileDialog.getFolder().then(function (chosenDir) {
         document.getElementById('logFolderName').textContent = chosenDir;
         document.getElementById("logPath").value = chosenDir;
+        document.getElementById("logStrategy").value = "network";
     });
 });
 
@@ -180,7 +180,7 @@ document.getElementById("googlePicker").addEventListener("click", function () {
     //do whatever is needed to switch to using google
 });
 
-document.getElementById("msPicker").addEventListener("click", function () {
+document.getElementById("officePicker").addEventListener("click", function () {
     //do whatever is needed to switch to using office
 });
 
@@ -198,14 +198,17 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     let remindersChoice = document.querySelector('input[name="reminders"]:checked').value;
     document.getElementById("currentHotKey").value = hotKeyChoice;
     let chosenDir = document.getElementById("logPath").value;
+    let logStrategy = document.getElementById("logStrategy").value;
     let settingsObj = {};
     if (deskNameEntry != "" && chosenDir != "") {
-        AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
+        GetLogLocations.getLogLocations(chosenDir, logStrategy).then(function (logPath) {
             SettingsScript.saveSetting('logPath', logPath)
                 .then(function (settingSaved) {
                     return SettingsScript.saveSetting('deskName', deskNameEntry);
                 }).then(function (settingSaved) {
                     return SettingsScript.saveSetting('hotKey', hotKeyChoice);
+                }).then(function (settingSaved) {
+                    return SettingsScript.saveSetting('logStrategy', logStrategy);
                 }).then(function (settingSaved) {
                     ipcRenderer.send('remindersChanged', remindersChoice);
                     return SettingsScript.saveSetting('reminders', remindersChoice);

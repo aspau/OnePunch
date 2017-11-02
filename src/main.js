@@ -236,24 +236,25 @@ app.on('activate', function () {
 });
 
 
-function genReminders(reminderType) {
+function genReminders(returnedSettingse) {
+    let reminderType = returnedSettings.reminders;
     if (reminderType == "popups") {
         createRemindersWindow();
     } else if (reminderType == "notifications") {
-        Reminders.getDailyPunches().then(function (dailyPunchCount) {
+        Reminders.getDailyPunches(returnedSettings).then(function (dailyPunchCount) {
             mainWindow.webContents.send('reminderNotify', dailyPunchCount);
         });
     }
 }
 
-function loopReminders(reminderType) {
+function loopReminders(returnedSettings) {
     let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
     let reminderLagMs = 1000 * 60 * reminderLagMinutes;
     //let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
     //let reminderLagMs = 1000 * reminderLagMinutes;
     remindersTimeout = setTimeout(function () {
-        genReminders(reminderType)
-        loopReminders(reminderType);
+        genReminders(returnedSettings);
+        loopReminders(returnedSettings);
     }, reminderLagMs);
 };
 
@@ -261,7 +262,7 @@ ipcMain.on('settingsComplete', (event, arg) => {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
             if (returnedSettings.reminders == "notifications" || returnedSettings.reminders == "popups") {
-                loopReminders(returnedSettings.reminders);
+                loopReminders(returnedSettings);
             }
             createSplashScreen();
             createMainWindow();

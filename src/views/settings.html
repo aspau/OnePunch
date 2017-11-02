@@ -13,37 +13,29 @@
         <div class="fourteen wide column">
             <h2>Just a couple of things to decide before we get going...</h2>
         </div>
-
-        <!--new auth flow stuff starts here -->
-
-
         <div class="fourteen wide column">
             <h2>Data Storage</h2>
         </div>
         <div class="twelve wide column">
-            <span id="logFolderName">Choose how you'd like to save logs</span>
+            <span id="logFolderName">Choose where you'd like to save logs</span>
         </div>
         <div class="twelve wide column">
-            <button id="logPicker" class="ui primary button fluid">Choose Network</button>
+            <button id="networkPicker" class="ui primary button fluid">Choose Network</button>
             <button id="googlePicker" class="ui primary button fluid">Choose Google</button>
-            <button id="msPicker" class="ui primary button fluid">Choose Office</button>
+            <button id="officePicker" class="ui primary button fluid">Choose Office</button>
         </div>
         <input id="logPath" type="hidden" name="userSetting" value="">
-        <input id="logMethod" type="hidden" name="userSetting" value="">
-
-        <!--new auth flow stuff ends here -->
-
-
+        <input id="logStrategy" type="hidden" name="userSetting" value="">
         <div class="fourteen wide column">
             <h2>HotKey</h2>
         </div>
         <div class="twelve wide column">
             <div class="field">
-                <input type="radio" name="hotKey" value="F9" id="F9" class="ui radio checkbox">
+                <input type="radio" name="hotKey" value="F9" id="F9" class="ui radio checkbox" checked>
                 <label for="F9">F9</label>
             </div>
             <div class="field">
-                <input type="radio" name="hotKey" value="Ctrl+F9" id="ctrlF9" class="ui radio checkbox" checked>
+                <input type="radio" name="hotKey" value="Ctrl+F9" id="ctrlF9" class="ui radio checkbox">
                 <label for="ctrlF9">Ctrl + F9</label>
             </div>
             <div class="field">
@@ -77,7 +69,7 @@
                 <input id="deskPicker" class="ui input large" name="userSetting" type="text" placeholder="Enter desk name" />
             </div>
         </div>
-        <div class="twelve wide column">
+        <div class="twelve wide column" style="padding: 20px 0px 5px 0px;">
             <button id="saveBtn" class="fluid ui purple button">Save</button>
         </div>
     </div>
