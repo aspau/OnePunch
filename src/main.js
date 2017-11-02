@@ -121,7 +121,7 @@ function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 350,
         height: 850,
-        resizable: false,
+        //resizable: false,
         show: true,
         center: true,
         maximizable: false,
@@ -137,7 +137,7 @@ function createSettingsWindow() {
     settingsWindow.on('closed', function () {
         settingsWindow = null
     });
-    settingsWindow.setMenu(null);
+    //settingsWindow.setMenu(null);
 }
 
 function createMainWindow() {

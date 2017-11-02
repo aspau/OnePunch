@@ -1,6 +1,6 @@
 // Load library
 const SettingsScript = require("./scripts/settings_script");
-const AddLogLocations = require("./scripts/addLogLocations");
+const GetLogLocations = require("./scripts/getLogLocations");
 const FileDialog = require("./scripts/getFileDialog");
 
 const {
@@ -35,7 +35,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     let logStrategy = document.getElementById("logStrategy").value;
     let settingsObj = {};
     if (deskNameEntry != "" && chosenDir != "") {
-        AddLogLocations.addLogLocations(chosenDir).then(function (logPath) {
+        GetLogLocations.getLogLocations(chosenDir, logStrategy).then(function (logPath) {
             SettingsScript.saveSetting('logPath', logPath)
                 .then(function (settingSaved) {
                     return SettingsScript.saveSetting('deskName', deskNameEntry);

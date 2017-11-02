@@ -4,7 +4,7 @@ const GoogleStrategy = require('./googleStrategy');
 const OfficeStrategy = require('./officeStrategy');
 
 
-module.exports = {
+self = module.exports = {
     generateLogObject: function (returnedSettings) {
         return new Promise(function (resolve, reject) {
             const deskName = returnedSettings.deskName;
@@ -51,11 +51,11 @@ module.exports = {
                 .then(function (returnedSettings) {
                     return self.generateLogObject(returnedSettings);
                 }).then(function (settingsLogObject) {
-                    if (returnedSettings.logStrategy === "network") {
+                    if (settingsLogObject.logStrategy === "network") {
                         return NetworkStrategy.enterLog(settingsLogObject);
-                    } else if (returnedSettings.logStrategy === "google") {
+                    } else if (settingsLogObject.logStrategy === "google") {
                         return GoogleStrategy.enterLog(settingsLogObject);
-                    } else if (returnedSettings.logStrategy === "office") {
+                    } else if (settingsLogObject.logStrategy === "office") {
                         return OfficeStrategy.enterLog(settingsLogObject);
                     }
                 }).then(function (logObject) {

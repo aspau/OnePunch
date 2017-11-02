@@ -6,17 +6,17 @@ const OfficeStrategy = require('./officeStrategy');
 
 module.exports = {
 
-    getLogLocations: function () {
+    getLogLocations: function(chosenDir, logStrategy) {
         return new Promise(function (resolve, reject) {
-            if (returnedSettings.logStrategy === "network") {
+            if (logStrategy === "network") {
                 NetworkStrategy.getLogLocation(chosenDir).then(function (logPath) {
                     resolve(logPath);
                 });
-            } else if (returnedSettings.logStrategy === "google") {
+            } else if (logStrategy === "google") {
                 GoogleStrategy.getLogLocation(chosenDir).then(function (logPath) {
                     resolve(logPath);
                 });
-            } else if (returnedSettings.logStrategy === "office") {
+            } else if (logStrategy === "office") {
                 OfficeStrategy.getLogLocation(chosenDir).then(function (logPath) {
                     resolve(logPath);
                 });

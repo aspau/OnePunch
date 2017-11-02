@@ -266,9 +266,18 @@ module.exports = {
             const primary = logPath + "\\op_log.txt";
             const secondary = secondaryLogPath + "\\op_log.txt";
             const tertiary = tertiaryLogPath + "\\op_log.txt";
+            const localLogs = returnedSettings.localLogs;
             var len = localLogs.length;
             var i = 0;
-            localLogs.forEach(function (logText) {
+            localLogs.forEach(function (logObject) {
+            const currentWeekday = logObject.currentWeekday;
+            const currentMonth = logObject.currentMonth;
+            const currentDateString = logObject.currentDateString;
+            const currentYear = logObject.currentYear;
+            const currentHour = logObject.currentHour;
+            const currentMinuteString = logObject.currentMinuteString;
+            const deskName = logObject.deskName;
+            const logText = currentWeekday + "," + currentMonth + "/" + currentDateString + "/" + currentYear + "," + currentHour + ":" + currentMinuteString + "," + deskName + '\r\n';
                 fs.writeFile(
                     primary,
                     logText, {
