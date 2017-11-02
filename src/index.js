@@ -7,6 +7,9 @@ const AddLogLocations = require("./scripts/addLogLocations");
 const FileDialog = require("./scripts/getFileDialog");
 const Pikaday = require("./scripts/pikaday");
 const WindowsNotifications = require("./scripts/windowsNotifications");
+const NetworkStrategy = require('./scripts/networkStrategy');
+const GoogleStrategy = require('./scripts/googleStrategy');
+const OfficeStrategy = require('./scripts/officeStrategy');
 
 const {
     globalShortcut
@@ -48,14 +51,11 @@ document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
 // load data and change settings tab to match current settings
 
 SettingsScript.getSetting().then(function (returnedSettings) {
-    const logPath = returnedSettings.logPath.display;
     const hotKey = returnedSettings.hotKey;
     const deskName = returnedSettings.deskName;
     const reminders = returnedSettings.reminders;
     setHotKey(hotKey);
     document.getElementById("deskPicker").value = deskName;
-    document.getElementById("logPath").value = logPath;
-    document.getElementById('logFolderName').textContent = logPath;
     document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
         if (radioBtn.value === hotKey) {
             radioBtn.checked = true;;
@@ -66,8 +66,13 @@ SettingsScript.getSetting().then(function (returnedSettings) {
             radioBtn.checked = true;;
         }
     });
-
     document.getElementById("currentHotKey").value = hotKey;
+
+    //******* This needs to change to reflect varying log option page content setting display
+    const logPath = returnedSettings.logPath.display;
+    document.getElementById("logPath").value = logPath;
+    document.getElementById('logFolderName').textContent = logPath;
+    //*******
 
     MoveLocalText.moveText().then(function (logsMoved) {
         if (logsMoved !== false) {
@@ -172,31 +177,12 @@ document.getElementById("logPicker").addEventListener("click", function () {
 });
 
 document.getElementById("googlePicker").addEventListener("click", function () {
-    FileDialog.getFolder().then(function (chosenDir) {
-        document.getElementById('logFolderName').textContent = chosenDir;
-        document.getElementById("logPath").value = chosenDir;
-    });
+    //do whatever is needed to switch to using google
 });
 
 document.getElementById("msPicker").addEventListener("click", function () {
-    FileDialog.getFolder().then(function (chosenDir) {
-        document.getElementById('logFolderName').textContent = chosenDir;
-        document.getElementById("logPath").value = chosenDir;
-    });
+    //do whatever is needed to switch to using office
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 document.getElementById("savePicker").addEventListener("click", function () {
     FileDialog.getFolder().then(function (chosenDir) {

@@ -1,82 +1,27 @@
-const fs = require('fs');
-const path = require('path');
-const SettingsScript = require('./settings_script')
-const WindowsNotifications = require("./windowsNotifications");
+const SettingsScript = require('./settings_script');
+const NetworkStrategy = require('./networkStrategy');
+const GoogleStrategy = require('./googleStrategy');
+const OfficeStrategy = require('./officeStrategy');
+
 
 module.exports = {
+
     moveText: function () {
         return new Promise(function (resolve, reject) {
-            SettingsScript.getSetting().then(function (returnedSettings) {
-                const logPath = returnedSettings.logPath.primary;
-                const secondaryLogPath = returnedSettings.logPath.secondary;
-                const tertiaryLogPath = returnedSettings.logPath.tertiary;
-                const primary = logPath + "\\op_log.txt";
-                const secondary = secondaryLogPath + "\\op_log.txt";
-                const tertiary = tertiaryLogPath + "\\op_log.txt";
-                SettingsScript.getSetting('localLogs').then(function (localLogs) {
-                    if (localLogs) {
-                        var len = localLogs.length;
-                        var i = 0;
-                        localLogs.forEach(function (logText) {
-                            fs.writeFile(
-                                primary,
-                                logText, {
-                                    encoding: "UTF-8",
-                                    flag: "a"
-                                },
-                                function (err) {
-                                    if (err) {
-                                        fs.writeFile(
-                                            secondary,
-                                            logText, {
-                                                encoding: "UTF-8",
-                                                flag: "a"
-                                            },
-                                            function (err) {
-                                                if (err) {
-                                                    fs.writeFile(
-                                                        tertiary,
-                                                        logText, {
-                                                            encoding: "UTF-8",
-                                                            flag: "a"
-                                                        },
-                                                        function (err) {
-                                                            if (err) {
-                                                                resolve(false);
-                                                            } else {
-                                                                i += 1;
-                                                                if (i == len) {
-                                                                    SettingsScript.deleteSetting('localLogs').then(function (remainingSettings) {
-                                                                        resolve(len);
-                                                                    });
-                                                                }
-                                                            }
-                                                        });
-                                                } else {
-                                                    i += 1;
-                                                    if (i == len) {
-                                                        SettingsScript.deleteSetting('localLogs').then(function (remainingSettings) {
-                                                            resolve(len);
-                                                        });
-                                                    }
-                                                }
-                                            });
-                                    } else {
-                                        i += 1;
-                                        if (i == len) {
-                                            SettingsScript.deleteSetting('localLogs').then(function (remainingSettings) {
-                                                resolve(len);
-                                            });
-                                        }
-                                    }
-                                });
-                        });
-                        //}
-                    } else {
-                        resolve(0);
+            SettingsScript.getSetting()
+                .then(function (settingsLogObject) {
+                    if (returnedSettings.logStrategy === "network") {
+                        return NetworkStrategy.moveLocalText(returnedSettings);
+                    } else if (returnedSettings.logStrategy === "google") {
+                        return GoogleStrategy.moveLocalText(returnedSettings);
+                    } else if (returnedSettings.logStrategy === "office") {
+                        return OfficeStrategy.moveLocalText(returnedSettings);
                     }
+                }).then(function (logsMoved) {
+                    resolve(logsMoved);
+                }).catch(function (error) {
+                    console.log("Failed!", error);
                 });
-            });
         });
     }
 }

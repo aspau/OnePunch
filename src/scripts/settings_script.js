@@ -31,3 +31,22 @@ module.exports = {
     }
 
 }
+
+/*
+
+Settings Example
+
+{
+    "logPath": {
+        "display": "I:\\Access Services\\OnePunch\\OnePunchAppData",
+        "primary": "i:\\access services\\onepunch\\onepunchappdata",
+        "secondary": "i:\\library\\access services\\onepunch\\onepunchappdata",
+        "tertiary": "\\\\fs9.american.edu\\shared\\library\\access services\\onepunch\\onepunchappdata"
+    },
+    "deskName": "upperlevel",
+    "hotKey": "Ctrl+F9",
+    "reminders": "false",
+    "initialized": true
+}
+
+*/
