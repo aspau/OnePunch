@@ -6,18 +6,23 @@ const SettingsScript = require('./settings_script');
 module.exports = {
     getLogLocation: function (folderLocation) {
         return new Promise(function (resolve, reject) {
-            const logPath = {};
+            let logPath = {};
             logPath.display = folderLocation;
             logPath.primary = folderLocation.toLowerCase();
             if (logPath.primary.indexOf("i:\\library\\") > -1) {
                 logPath.secondary = logPath.primary.slice(0, 3) + logPath.primary.slice(11);
                 logPath.tertiary = logPath.primary.replace("i:", "\\\\fs9.american.edu\\shared");
-            } else if (logPath.primary.indexOf("\\\\fs") > -1) { //there's fs9 in it
+            } else if (logPath.primary.indexOf("\\\\fs") > -1) {
                 logPath.secondary = logPath.primary.replace("\\\\fs9.american.edu\\shared", "i:");
                 logPath.secondary = logPath.primary.replace("\\\\fs9.american.edu\\shared\\library", "i:");
             } else {
                 logPath.secondary = logPath.primary.slice(0, 2) + "\\library" + logPath.primary.slice(2);
-                logPath.tertiary = logPath.secondary.replace("i:", "\\\\fs9.american.edu\\shared");
+                if (logPath.primary.indexOf("i:\\") > -1) {
+                    logPath.tertiary = logPath.secondary.replace("i:", "\\\\fs9.american.edu\\shared");
+                } else {
+                    logPath.tertiary = logPath.secondary;
+                }
+
             }
             resolve(logPath);
         });
@@ -270,14 +275,14 @@ module.exports = {
             var len = localLogs.length;
             var i = 0;
             localLogs.forEach(function (logObject) {
-            const currentWeekday = logObject.currentWeekday;
-            const currentMonth = logObject.currentMonth;
-            const currentDateString = logObject.currentDateString;
-            const currentYear = logObject.currentYear;
-            const currentHour = logObject.currentHour;
-            const currentMinuteString = logObject.currentMinuteString;
-            const deskName = logObject.deskName;
-            const logText = currentWeekday + "," + currentMonth + "/" + currentDateString + "/" + currentYear + "," + currentHour + ":" + currentMinuteString + "," + deskName + '\r\n';
+                const currentWeekday = logObject.currentWeekday;
+                const currentMonth = logObject.currentMonth;
+                const currentDateString = logObject.currentDateString;
+                const currentYear = logObject.currentYear;
+                const currentHour = logObject.currentHour;
+                const currentMinuteString = logObject.currentMinuteString;
+                const deskName = logObject.deskName;
+                const logText = currentWeekday + "," + currentMonth + "/" + currentDateString + "/" + currentYear + "," + currentHour + ":" + currentMinuteString + "," + deskName + '\r\n';
                 fs.writeFile(
                     primary,
                     logText, {

@@ -43,8 +43,9 @@ Settings Example
         "secondary": "i:\\library\\access services\\onepunch\\onepunchappdata",
         "tertiary": "\\\\fs9.american.edu\\shared\\library\\access services\\onepunch\\onepunchappdata"
     },
-    "deskName": "upperlevel",
+    "deskName": "lowerlevel",
     "hotKey": "Ctrl+F9",
+    "logStrategy": "network",
     "reminders": "false",
     "initialized": true
 }

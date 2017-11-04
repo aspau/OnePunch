@@ -10,11 +10,12 @@ const {
     fs,
     ipcMain
 } = require('electron');
-const AutoLaunch = require('auto-launch');
 const url = require('url');
 const path = require('path');
 const SettingsScript = require('./scripts/settings_script');
 const Reminders = require('./scripts/reminders');
+
+app.showExitPrompt = true;
 
 
 const appFolder = path.dirname(process.execPath)
@@ -169,13 +170,16 @@ function createMainWindow() {
         {
             label: 'How are we doing today?',
             click: function () {
-                genReminders("notifications");
+                SettingsScript.getSetting().then(function (returnedSettings) {
+                    createNotificationReminder(returnedSettings);
+                });
             }
                 },
         {
             label: 'Quit',
             click: function () {
                 app.isQuiting = true;
+                app.showExitPrompt = false
                 app.quit();
 
             }
@@ -192,9 +196,31 @@ function createMainWindow() {
         mainWindow.show();
     });
     appIcon.setContextMenu(contextMenu);
-    mainWindow.on('close', function () {
-        mainWindow = null
-    });
+    //mainWindow.on('close', function () {
+    //   mainWindow = null
+    //});
+
+    mainWindow.on('close', (e) => {
+        if (app.showExitPrompt) {
+            e.preventDefault() // Prevents the window from closing
+            dialog.showMessageBox({
+                type: 'question',
+                buttons: ['Yes', 'No'],
+                title: 'Confirm',
+                message: 'Are you sure you want to quit?'
+            }, function (response) {
+                if (response === 0) { // Runs the following if 'Yes' is clicked
+                    app.showExitPrompt = false
+                    // mainWindow = null
+                    mainWindow.close()
+                }
+            })
+        }
+    })
+
+
+
+
     mainWindow.on('closed', function () {
         mainWindow = null
     });
@@ -208,7 +234,7 @@ app.on('ready', function () {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
             if (returnedSettings.reminders == "notifications" || returnedSettings.reminders == "popups") {
-                loopReminders(returnedSettings.reminders);
+                loopReminders(returnedSettings);
             }
             createSplashScreen();
             createMainWindow()
@@ -236,28 +262,31 @@ app.on('activate', function () {
 });
 
 
-function genReminders(returnedSettingse) {
-    let reminderType = returnedSettings.reminders;
+function genReminders(returnedSettings) {
+    let reminderType = returnedSettings.reminders
     if (reminderType == "popups") {
         createRemindersWindow();
-    } else if (reminderType == "notifications") {
-        Reminders.getDailyPunches(returnedSettings).then(function (dailyPunchCount) {
-            mainWindow.webContents.send('reminderNotify', dailyPunchCount);
-        });
+    } else {
+        createNotificationReminder(returnedSettings);
     }
 }
 
 function loopReminders(returnedSettings) {
-    let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
-    let reminderLagMs = 1000 * 60 * reminderLagMinutes;
-    //let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
-    //let reminderLagMs = 1000 * reminderLagMinutes;
+    //let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
+    //let reminderLagMs = 1000 * 60 * reminderLagMinutes;
+    let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
+    let reminderLagMs = 1000 * reminderLagMinutes;
     remindersTimeout = setTimeout(function () {
         genReminders(returnedSettings);
         loopReminders(returnedSettings);
     }, reminderLagMs);
 };
 
+function createNotificationReminder(returnedSettings) {
+    Reminders.getDailyPunches(returnedSettings).then(function (dailyPunchCount) {
+        mainWindow.webContents.send('reminderNotify', dailyPunchCount);
+    });
+}
 ipcMain.on('settingsComplete', (event, arg) => {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
@@ -274,12 +303,15 @@ ipcMain.on('settingsComplete', (event, arg) => {
 });
 
 ipcMain.on('remindersChanged', (event, remindersType) => {
-    if (typeof remindersTimeout !== 'undefined') {
-        clearTimeout(remindersTimeout);
-    }
-    if (remindersType == "notifications" || remindersType == "popups") {
-        loopReminders(remindersType);
-    }
+    SettingsScript.getSetting().then(function (returnedSettings) {
+        if (typeof remindersTimeout !== 'undefined') {
+            clearTimeout(remindersTimeout);
+        }
+        let remindersType = returnedSettings.reminders;
+        if (remindersType == "notifications" || remindersType == "popups") {
+            loopReminders(returnedSettings);
+        }
+    });
 });
 
 ipcMain.on('getCurrentCount', (event) => {
