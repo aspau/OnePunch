@@ -7,7 +7,12 @@ const {
     ipcRenderer,
     remote
 } = require('electron');
+const {
+    dialog
+} = require('electron').remote
 var main = remote.require("./main.js");
+const path = require('path');
+const iconpath = path.join(__dirname, '/images/owl_ico_16.png');
 
 // add listeners to page elements
 
@@ -54,6 +59,12 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                 });
         });
     } else {
-        alert("Please choose your settings");
+        dialog.showMessageBox({
+            message: "Please choose your settings",
+            buttons: ["OK"],
+            type: "info",
+            icon: iconpath,
+            title: "Alert"
+        });
     }
 });

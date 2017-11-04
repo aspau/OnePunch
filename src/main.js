@@ -203,10 +203,14 @@ function createMainWindow() {
     mainWindow.on('close', (e) => {
         if (app.showExitPrompt) {
             e.preventDefault() // Prevents the window from closing
+
+            icon: '/Users/somebody/images/window.png'
+
             dialog.showMessageBox({
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 title: 'Confirm',
+                icon: iconpath,
                 message: 'Are you sure you want to quit?'
             }, function (response) {
                 if (response === 0) { // Runs the following if 'Yes' is clicked
@@ -214,12 +218,9 @@ function createMainWindow() {
                     // mainWindow = null
                     mainWindow.close()
                 }
-            })
+            });
         }
-    })
-
-
-
+    });
 
     mainWindow.on('closed', function () {
         mainWindow = null

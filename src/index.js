@@ -12,7 +12,8 @@ const GoogleStrategy = require('./scripts/googleStrategy');
 const OfficeStrategy = require('./scripts/officeStrategy');
 
 const {
-    globalShortcut
+    globalShortcut,
+    dialog
 } = require('electron').remote;
 
 const {
@@ -20,6 +21,8 @@ const {
     remote
 } = require('electron');
 var main = remote.require("./main.js");
+const path = require('path');
+const iconpath = path.join(__dirname, '/images/owl_ico_16.png');
 
 // Function to add HotKey. Will be called after data loaded
 
@@ -117,7 +120,13 @@ document.getElementById("generateReportBtn").addEventListener("click", function 
     if (startDate != "" && endDate != "" && savePath != "") {
         Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailByHour, savePath);
     } else {
-        alert("Please choose report parameters");
+        dialog.showMessageBox({
+            message: "Please choose report parameters",
+            buttons: ["OK"],
+            type: "info",
+            icon: iconpath,
+            title: "Alert"
+        });
     }
 });
 
@@ -216,13 +225,25 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                     globalShortcut.unregister(currentHotKey);
                     setHotKey(hotKeyChoice);
                 }).then(function (settingSaved) {
-                    alert("Settings saved!");
+                    dialog.showMessageBox({
+                        message: "Settings saved!",
+                        buttons: ["OK"],
+                        type: "info",
+                        icon: iconpath,
+                        title: "Alert"
+                    });
                 }).catch(function (error) {
                     console.log("Failed!", error);
                 });
         });
     } else {
-        alert("Please choose your settings");
+        dialog.showMessageBox({
+            message: "Please choose your settings",
+            buttons: ["OK"],
+            type: "info",
+            icon: iconpath,
+            title: "Alert"
+        });
     }
 });
 
