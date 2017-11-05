@@ -17,7 +17,7 @@ module.exports = {
                 });
             } else if (returnedSettings.logStrategy === "office") {
                 OfficeStrategy.getDailyTotal(returnedSettings).then(function (dailyPunchCount) {
-                    resolve(logPath);
+                    resolve(dailyPunchCount);
                 });
             }
 

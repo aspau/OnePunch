@@ -207,8 +207,10 @@ module.exports = {
                                         logObj.jsDate = new Date(logDateTimeString);
                                         logObj.hour = logObj.jsDate.getHours();
                                         logObj.count = 1;
+                                        console.log(logObj);
                                         if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
                                             objectArray.push(logObj);
+                                            console.log("Pushed!");
                                         }
                                         if (i == logArray.length - 2) {
                                             resolve(objectArray);
@@ -229,8 +231,10 @@ module.exports = {
                                 logObj.jsDate = new Date(logDateTimeString);
                                 logObj.hour = logObj.jsDate.getHours();
                                 logObj.count = 1;
+                                console.log(logObj);
                                 if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
                                     objectArray.push(logObj);
+                                    console.log("Pushed!");
                                 }
                                 if (i == logArray.length - 2) {
                                     resolve(objectArray);
@@ -251,8 +255,10 @@ module.exports = {
                         logObj.jsDate = new Date(logDateTimeString);
                         logObj.hour = logObj.jsDate.getHours();
                         logObj.count = 1;
+                        console.log(logObj);
                         if (logObj.jsDate > jsStartDate && logObj.jsDate < jsEndDate) {
                             objectArray.push(logObj);
+                            console.log("Pushed!");
                         }
                         if (i == logArray.length - 2) {
                             resolve(objectArray);
