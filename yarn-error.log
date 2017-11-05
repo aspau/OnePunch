@@ -45,7 +45,7 @@ npm manifest:
           "nsis": {
               "installerIcon": "src/build/icon.ico",
               "uninstallerIcon": "src/build/icon.ico",
-              perMachine: true
+              "perMachine:" true
           }
       },
       "devDependencies": {
@@ -2274,7 +2274,7 @@ Lockfile:
       fd-slicer "~1.0.1"
 
 Trace: 
-  SyntaxError: C:\Users\circdesk\Documents\Electron\OnePunchSourceFiles\package.json: Unexpected token p in JSON at position 850
+  SyntaxError: C:\Users\circdesk\Documents\Electron\OnePunchSourceFiles\package.json: Unexpected token t in JSON at position 864
       at Object.parse (native)
       at C:\Program Files (x86)\Yarn\lib\cli.js:770:59
       at next (native)
