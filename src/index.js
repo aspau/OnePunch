@@ -73,7 +73,7 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     });
     document.getElementById("currentHotKey").value = hotKey;
     const logPath = returnedSettings.logPath.display;
-    const logPathValue = returnedSettings.logPath.primary
+    const logPathValue = returnedSettings.logPath.display;
     document.getElementById("logPath").value = logPathValue;
     document.getElementById("logStrategy").value = logStrategy;
     document.getElementById('logFolderName').textContent = logPath;
