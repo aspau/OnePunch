@@ -303,7 +303,7 @@ ipcMain.on('settingsComplete', (event, arg) => {
     });
 });
 
-ipcMain.on('remindersChanged', (event, remindersType) => {
+ipcMain.on('remindersChanged', () => {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (typeof remindersTimeout !== 'undefined') {
             clearTimeout(remindersTimeout);

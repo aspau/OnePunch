@@ -13,6 +13,7 @@ const {
 var main = remote.require("./main.js");
 const path = require('path');
 const iconpath = path.join(__dirname, '/images/owl_ico_16.png');
+const warnIconPath = path.join(__dirname, '/images/exclamation_mark_64.png');
 
 // add listeners to page elements
 
@@ -63,7 +64,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
             message: "Please choose your settings",
             buttons: ["OK"],
             type: "info",
-            icon: iconpath,
+            icon: warnIconPath,
             title: "Alert"
         });
     }
