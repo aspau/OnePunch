@@ -1,8 +1,8 @@
 Arguments: 
-  C:\Program Files (x86)\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js dist
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js build
 
 PATH: 
-  G:\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;G:\bin;C:\Oracle\instantclient;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\Program Files (x86)\Unified Messaging Client;C:\Program Files (x86)\PharosSystems\Core;C:\Program Files\Microsoft DNX\Dnvm;C:\Program Files\Microsoft SQL Server\130\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\Tools\Binn;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Program Files (x86)\PuTTY;C:\Program Files\Git\cmd;C:\Program Files (x86)\Brackets\command;C:\Program Files (x86)\Yarn\bin;C:\Program Files (x86)\nodejs;C:\Users\toohey\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Heroku\bin;C:\Users\toohey\AppData\Local\GitHubDesktop\bin;C:\Users\toohey\AppData\Local\Yarn\bin;C:\Users\toohey\AppData\Roaming\npm;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
+  C:\Users\circdesk\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\circdesk\bin;C:\Oracle\instantclient;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\Program Files (x86)\Unified Messaging Client;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files (x86)\Brackets\command;C:\Program Files\Git\cmd;C:\Program Files\nodejs;C:\Program Files (x86)\Yarn\bin;C:\Users\circdesk\AppData\Local\Microsoft\WindowsApps;C:\Users\circdesk\AppData\Local\GitHubDesktop\bin;C:\Users\circdesk\AppData\Roaming\npm;C:\Users\circdesk\AppData\Local\Yarn\bin;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
 
 Yarn version: 
   1.2.1
@@ -16,8 +16,8 @@ Platform:
 npm manifest: 
   {
       "name": "onepunch",
-      "productName": "One Punch",
-      "version": "1.0.0",
+      "productName": "OnePunch",
+      "version": "1.1.0",
       "description": "A logger for patron interactions",
       "main": "src/main.js",
       "scripts": {
@@ -25,25 +25,28 @@ npm manifest:
           "pack": "electron-builder --dir",
           "dist": "electron-builder"
       },
-      "keywords": [],
-      "author": "Liam",
+      "repository": {
+          "type": "git",
+          "url": "git+https://github.com/aspau/OnePunch.git"
+      },
+      "author": "aspau",
       "license": "MIT",
       "dependencies": {
-          "auto-launch": "^5.0.1",
           "electron-settings": "^3.1.3"
       },
   
       "build": {
-          "appId": "com.electron.onepunch",
-          "productName": "One Punch",
+          "appId": "com.onepunch",
+          "productName": "OnePunch",
           "directories": {
               "buildResources": "src/build"
           },
           "icon": "src/build/icon.ico",
           "nsis": {
-              "installerIcon": "src/images/owl_ico.ico",
-              "uninstallerIcon": "src/images/owl_ico.ico"
-          },
+              "installerIcon": "src/build/icon.ico",
+              "uninstallerIcon": "src/build/icon.ico",
+              perMachine: true
+          }
       },
       "devDependencies": {
           "electron": "~1.7.8",
@@ -133,10 +136,6 @@ Lockfile:
       js-yaml "^3.10.0"
       rabin-bindings "~1.7.3"
   
-  applescript@^1.0.0:
-    version "1.0.0"
-    resolved "https://registry.yarnpkg.com/applescript/-/applescript-1.0.0.tgz#bb87af568cad034a4e48c4bdaf6067a3a2701317"
-  
   aproba@^1.0.3:
     version "1.2.0"
     resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.2.0.tgz#6802e6264efd18c790a1b0d517f0f2627bf2c94a"
@@ -197,16 +196,6 @@ Lockfile:
   author-regex@^1.0.0:
     version "1.0.0"
     resolved "https://registry.yarnpkg.com/author-regex/-/author-regex-1.0.0.tgz#d08885be6b9bbf9439fe087c76287245f0a81450"
-  
-  auto-launch@^5.0.1:
-    version "5.0.1"
-    resolved "https://registry.yarnpkg.com/auto-launch/-/auto-launch-5.0.1.tgz#2015a8a30384abe0e7f98cbdca8145cf154753ae"
-    dependencies:
-      applescript "^1.0.0"
-      mkdirp "^0.5.1"
-      path-is-absolute "^1.0.0"
-      untildify "^3.0.2"
-      winreg "1.2.2"
   
   aws-sign2@~0.7.0:
     version "0.7.0"
@@ -2128,10 +2117,6 @@ Lockfile:
     version "0.1.1"
     resolved "https://registry.yarnpkg.com/universalify/-/universalify-0.1.1.tgz#fa71badd4437af4c148841e3b3b165f9e9e590b7"
   
-  untildify@^3.0.2:
-    version "3.0.2"
-    resolved "https://registry.yarnpkg.com/untildify/-/untildify-3.0.2.tgz#7f1f302055b3fea0f3e81dc78eb36766cb65e3f1"
-  
   unzip-response@^1.0.0:
     version "1.0.2"
     resolved "https://registry.yarnpkg.com/unzip-response/-/unzip-response-1.0.2.tgz#b984f0877fc0a89c2c773cc1ef7b5b232b5b06fe"
@@ -2208,10 +2193,6 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/widest-line/-/widest-line-1.0.0.tgz#0c09c85c2a94683d0d7eaf8ee097d564bf0e105c"
     dependencies:
       string-width "^1.0.1"
-  
-  winreg@1.2.2:
-    version "1.2.2"
-    resolved "https://registry.yarnpkg.com/winreg/-/winreg-1.2.2.tgz#8509afa3b71c5bbd110a6d7c6247ec67736c598f"
   
   wrap-ansi@^2.0.0:
     version "2.1.0"
@@ -2293,7 +2274,7 @@ Lockfile:
       fd-slicer "~1.0.1"
 
 Trace: 
-  SyntaxError: C:\Users\toohey\Documents\Electron\OnePunch-Elect-Build\package.json: Unexpected token } in JSON at position 814
+  SyntaxError: C:\Users\circdesk\Documents\Electron\OnePunchSourceFiles\package.json: Unexpected token p in JSON at position 850
       at Object.parse (native)
       at C:\Program Files (x86)\Yarn\lib\cli.js:770:59
       at next (native)

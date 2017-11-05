@@ -29,7 +29,7 @@
         "nsis": {
             "installerIcon": "src/build/icon.ico",
             "uninstallerIcon": "src/build/icon.ico",
-            perMachine: true
+            "perMachine:" true
         }
     },
     "devDependencies": {
