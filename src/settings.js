@@ -13,6 +13,7 @@ const {
 var main = remote.require("./main.js");
 const path = require('path');
 const iconpath = path.join(__dirname, '/images/owl_ico_16.png');
+const warnIconPath = path.join(__dirname, '/images/exclamation_mark_64.png');
 
 // add listeners to page elements
 
@@ -34,16 +35,18 @@ document.getElementById("officePicker").addEventListener("click", function () {
 
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
+    let deskName = deskNameEntry.trim();
+    deskName = deskName.replace(/[\uE000-\uF8FF]/g, '');
     let hotKeyChoice = document.querySelector('input[name="hotKey"]:checked').value;
     let remindersChoice = document.querySelector('input[name="reminders"]:checked').value;
     let chosenDir = document.getElementById("logPath").value;
     let logStrategy = document.getElementById("logStrategy").value;
     let settingsObj = {};
-    if (deskNameEntry != "" && chosenDir != "") {
+    if (deskName != "" && chosenDir != "") {
         GetLogLocations.getLogLocations(chosenDir, logStrategy).then(function (logPath) {
             SettingsScript.saveSetting('logPath', logPath)
                 .then(function (settingSaved) {
-                    return SettingsScript.saveSetting('deskName', deskNameEntry);
+                    return SettingsScript.saveSetting('deskName', deskName);
                 }).then(function (settingSaved) {
                     return SettingsScript.saveSetting('hotKey', hotKeyChoice);
                 }).then(function (settingSaved) {
@@ -63,7 +66,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
             message: "Please choose your settings",
             buttons: ["OK"],
             type: "info",
-            icon: iconpath,
+            icon: warnIconPath,
             title: "Alert"
         });
     }

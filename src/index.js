@@ -23,6 +23,7 @@ const {
 var main = remote.require("./main.js");
 const path = require('path');
 const iconpath = path.join(__dirname, '/images/owl_ico_16.png');
+const warnIconPath = path.join(__dirname, '/images/exclamation_mark_64.png');
 
 // Function to add HotKey. Will be called after data loaded
 
@@ -72,7 +73,7 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     });
     document.getElementById("currentHotKey").value = hotKey;
     const logPath = returnedSettings.logPath.display;
-    const logPathValue = returnedSettings.logPath.primary
+    const logPathValue = returnedSettings.logPath.display;
     document.getElementById("logPath").value = logPathValue;
     document.getElementById("logStrategy").value = logStrategy;
     document.getElementById('logFolderName').textContent = logPath;
@@ -118,13 +119,31 @@ document.getElementById("generateReportBtn").addEventListener("click", function 
     let endDate = document.getElementById('endDate').value;
     let savePath = document.getElementById("savePath").value;
     if (startDate != "" && endDate != "" && savePath != "") {
-        Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailByHour, savePath);
+        Reports.generateReport(startDate, endDate, showDetailByDesk, showDetailByHour, savePath).then(function (reportingComplete) {
+            if (reportingComplete) {
+                dialog.showMessageBox({
+                    message: "Report saved!",
+                    buttons: ["OK"],
+                    type: "info",
+                    icon: iconpath,
+                    title: "Saved"
+                });
+            } else {
+                dialog.showMessageBox({
+                    message: "There was an error generating your report",
+                    buttons: ["OK"],
+                    type: "info",
+                    icon: warnIconPath,
+                    title: "Error"
+                });
+            }
+        });
     } else {
         dialog.showMessageBox({
             message: "Please choose report parameters",
             buttons: ["OK"],
             type: "info",
-            icon: iconpath,
+            icon: warnIconPath,
             title: "Alert"
         });
     }
@@ -202,6 +221,8 @@ document.getElementById("savePicker").addEventListener("click", function () {
 
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
+    let deskName = deskNameEntry.trim();
+    deskName = deskName.replace(/[\uE000-\uF8FF]/g, '');
     let currentHotKey = document.getElementById("currentHotKey").value;
     let hotKeyChoice = document.querySelector('input[name="hotKey"]:checked').value;
     let remindersChoice = document.querySelector('input[name="reminders"]:checked').value;
@@ -209,18 +230,21 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     let chosenDir = document.getElementById("logPath").value;
     let logStrategy = document.getElementById("logStrategy").value;
     let settingsObj = {};
-    if (deskNameEntry != "" && chosenDir != "") {
+    if (deskName != "" && chosenDir != "") {
         GetLogLocations.getLogLocations(chosenDir, logStrategy).then(function (logPath) {
             SettingsScript.saveSetting('logPath', logPath)
                 .then(function (settingSaved) {
-                    return SettingsScript.saveSetting('deskName', deskNameEntry);
+                    return SettingsScript.saveSetting('deskName', deskName);
                 }).then(function (settingSaved) {
                     return SettingsScript.saveSetting('hotKey', hotKeyChoice);
                 }).then(function (settingSaved) {
                     return SettingsScript.saveSetting('logStrategy', logStrategy);
                 }).then(function (settingSaved) {
-                    ipcRenderer.send('remindersChanged', remindersChoice);
+                    // ipcRenderer.send('remindersChanged', remindersChoice);
+                    // return SettingsScript.saveSetting('reminders', remindersChoice);
                     return SettingsScript.saveSetting('reminders', remindersChoice);
+                }).then(function (settingSaved) {
+                    ipcRenderer.send('remindersChanged');
                 }).then(function (settingSaved) {
                     globalShortcut.unregister(currentHotKey);
                     setHotKey(hotKeyChoice);
@@ -230,7 +254,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                         buttons: ["OK"],
                         type: "info",
                         icon: iconpath,
-                        title: "Alert"
+                        title: "Saved"
                     });
                 }).catch(function (error) {
                     console.log("Failed!", error);
@@ -241,7 +265,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
             message: "Please choose your settings",
             buttons: ["OK"],
             type: "info",
-            icon: iconpath,
+            icon: warnIconPath,
             title: "Alert"
         });
     }

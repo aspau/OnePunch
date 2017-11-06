@@ -28,7 +28,8 @@
         "icon": "src/build/icon.ico",
         "nsis": {
             "installerIcon": "src/build/icon.ico",
-            "uninstallerIcon": "src/build/icon.ico"
+            "uninstallerIcon": "src/build/icon.ico",
+            "perMachine": true
         }
     },
     "devDependencies": {
