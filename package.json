@@ -20,7 +20,7 @@
     },
 
     "build": {
-        "appId": "com.onepunch",
+        "appId": "com.app.onepunch",
         "productName": "OnePunch",
         "directories": {
             "buildResources": "src/build"
