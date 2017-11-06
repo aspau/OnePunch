@@ -122,7 +122,7 @@ function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 350,
         height: 850,
-        //resizable: false,
+        resizable: false,
         show: true,
         center: true,
         maximizable: false,
@@ -138,14 +138,14 @@ function createSettingsWindow() {
     settingsWindow.on('closed', function () {
         settingsWindow = null
     });
-    //settingsWindow.setMenu(null);
+    settingsWindow.setMenu(null);
 }
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 350,
         height: 800,
-        //resizable: false,
+        resizable: false,
         show: false,
         center: true,
         maximizable: false,
@@ -162,12 +162,6 @@ function createMainWindow() {
     const appIcon = new Tray(iconpath);
     const contextMenu = Menu.buildFromTemplate([
         {
-            label: 'Go to OnePunch',
-            click: function () {
-                mainWindow.show();
-            }
-                },
-        {
             label: 'How are we doing today?',
             click: function () {
                 SettingsScript.getSetting().then(function (returnedSettings) {
@@ -176,10 +170,16 @@ function createMainWindow() {
             }
                 },
         {
+            label: 'Open OnePunch',
+            click: function () {
+                mainWindow.show();
+            }
+                },
+        {
             label: 'Quit',
             click: function () {
                 app.isQuiting = true;
-                app.showExitPrompt = false
+                app.showExitPrompt = false;
                 app.quit();
 
             }
@@ -225,7 +225,7 @@ function createMainWindow() {
     mainWindow.on('closed', function () {
         mainWindow = null
     });
-    //mainWindow.setMenu(null);
+    mainWindow.setMenu(null);
 }
 
 // This method will be called when Electron has finished
@@ -273,10 +273,10 @@ function genReminders(returnedSettings) {
 }
 
 function loopReminders(returnedSettings) {
-    //let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
-    //let reminderLagMs = 1000 * 60 * reminderLagMinutes;
-    let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
-    let reminderLagMs = 1000 * reminderLagMinutes;
+    let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
+    let reminderLagMs = 1000 * 60 * reminderLagMinutes;
+    //let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
+    //let reminderLagMs = 1000 * reminderLagMinutes;
     remindersTimeout = setTimeout(function () {
         genReminders(returnedSettings);
         loopReminders(returnedSettings);
@@ -303,7 +303,7 @@ ipcMain.on('settingsComplete', (event, arg) => {
     });
 });
 
-ipcMain.on('remindersChanged', (event, remindersType) => {
+ipcMain.on('remindersChanged', () => {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (typeof remindersTimeout !== 'undefined') {
             clearTimeout(remindersTimeout);
