@@ -1,4 +1,10 @@
 // Load library
+
+// GH Token 06811705757b29d87e21019a511def5fa3e632de
+
+ //[Environment]::SetEnvironmentVariable("GH_TOKEN","06811705757b29d87e21019a511def5fa3e632de","User")
+
+
 const LogText = require("./scripts/logText");
 const MoveLocalText = require("./scripts/moveLocalText");
 const Reports = require("./scripts/reporting");

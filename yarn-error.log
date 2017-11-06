@@ -1,8 +1,8 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js build
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add electron-updater
 
 PATH: 
-  C:\Users\circdesk\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\circdesk\bin;C:\Oracle\instantclient;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\Program Files (x86)\Unified Messaging Client;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files (x86)\Brackets\command;C:\Program Files\Git\cmd;C:\Program Files\nodejs;C:\Program Files (x86)\Yarn\bin;C:\Users\circdesk\AppData\Local\Microsoft\WindowsApps;C:\Users\circdesk\AppData\Local\GitHubDesktop\bin;C:\Users\circdesk\AppData\Roaming\npm;C:\Users\circdesk\AppData\Local\Yarn\bin;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
+  C:\Users\Liam\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\Liam\bin;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client;C:\Program Files\Intel\iCLS Client;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\DTS\Binn;C:\Program Files (x86)\Skype\Phone;C:\Program Files\Microsoft DNX\Dnvm;C:\Program Files\Microsoft SQL Server\130\Tools\Binn;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Program Files (x86)\PuTTY;C:\Program Files (x86)\Brackets\command;C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin;C:\Program Files\Git\cmd;C:\Program Files (x86)\Yarn\bin;C:\Program Files\nodejs;C:\Users\Liam\AppData\Local\Programs\Python\Python36-32\Scripts;C:\Users\Liam\AppData\Local\Programs\Python\Python36-32;C:\Users\Liam\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Heroku\bin;C:\Users\Liam\AppData\Local\GitHubDesktop\bin;C:\Users\Liam\AppData\Local\Yarn\bin;C:\Users\Liam\AppData\Roaming\npm;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
 
 Yarn version: 
   1.2.1
@@ -36,7 +36,7 @@ npm manifest:
       },
   
       "build": {
-          "appId": "com.onepunch",
+          "appId": "com.app.onepunch",
           "productName": "OnePunch",
           "directories": {
               "buildResources": "src/build"
@@ -45,7 +45,10 @@ npm manifest:
           "nsis": {
               "installerIcon": "src/build/icon.ico",
               "uninstallerIcon": "src/build/icon.ico",
-              "perMachine:" true
+              "perMachine": true
+          },
+          "win": {
+              "publish": ["github"]
           }
       },
       "devDependencies": {
@@ -54,6 +57,11 @@ npm manifest:
           "electron-packager": "^9.1.0"
       }
   }
+  
+  
+  // GH Token 06811705757b29d87e21019a511def5fa3e632de
+  
+   //[Environment]::SetEnvironmentVariable("GH_TOKEN","06811705757b29d87e21019a511def5fa3e632de","User")
 
 yarn manifest: 
   No manifest
@@ -2274,7 +2282,7 @@ Lockfile:
       fd-slicer "~1.0.1"
 
 Trace: 
-  SyntaxError: C:\Users\circdesk\Documents\Electron\OnePunchSourceFiles\package.json: Unexpected token t in JSON at position 864
+  SyntaxError: C:\Users\Liam\Documents\Projects\OnePunch\package.json: Unexpected token / in JSON at position 1095
       at Object.parse (native)
       at C:\Program Files (x86)\Yarn\lib\cli.js:770:59
       at next (native)
