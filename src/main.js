@@ -35,6 +35,11 @@ const iconpath = path.join(__dirname, '/images/owl_ico_16.png');
 const BrowserWindow = electron.BrowserWindow;
 
 
+
+var Toaster = require('electron-toaster');
+var toaster = new Toaster();
+
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -164,9 +169,11 @@ function createMainWindow() {
         {
             label: 'How are we doing today?',
             click: function () {
-                SettingsScript.getSetting().then(function (returnedSettings) {
+                /*SettingsScript.getSetting().then(function (returnedSettings) {
                     createNotificationReminder(returnedSettings);
-                });
+                });*/
+
+                createRemindersWindow();
             }
                 },
         {
@@ -239,6 +246,7 @@ app.on('ready', function () {
             }
             createSplashScreen();
             createMainWindow()
+            toaster.init(mainWindow);
         } else {
             createSettingsWindow();
         }
