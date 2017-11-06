@@ -12,12 +12,19 @@ const {
 } = require('electron');
 const url = require('url');
 const path = require('path');
+const {autoUpdater} = require("electron-updater");
 const SettingsScript = require('./scripts/settings_script');
 const Reminders = require('./scripts/reminders');
 const os = require('os');
 const osRelease = os.release();
 const osReleaseArray = osRelease.split(".");
 osReleaseNum = osReleaseArray[2];
+
+if (osReleaseNum >= 16000) {
+    slimNotifications = true;
+} else {
+    slimNotifications = false;
+}
 
 app.showExitPrompt = true;
 
@@ -173,7 +180,7 @@ function createMainWindow() {
         {
             label: 'How are we doing today?',
             click: function () {
-                if (osReleaseNum >= 16000) {
+                if (slimNotifications) {
                     createRemindersWindow();
                 } else {
                     SettingsScript.getSetting().then(function (returnedSettings) {
@@ -253,6 +260,7 @@ app.on('ready', function () {
             createSplashScreen();
             createMainWindow()
             toaster.init(mainWindow);
+            autoUpdater.checkForUpdatesAndNotify();
         } else {
             createSettingsWindow();
         }

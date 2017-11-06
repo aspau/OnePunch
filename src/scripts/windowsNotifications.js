@@ -2,11 +2,16 @@ const os = require('os');
 const osRelease = os.release();
 const osReleaseArray = osRelease.split(".");
 const osReleaseNum = osReleaseArray[2];
+if (osReleaseNum >= 16000) {
+    slimNotifications = true;
+} else {
+    slimNotifications = false;
+}
 
 module.exports = {
 
     notify: function (notificationTitle, notificationText, icon, hangTime) {
-        if (osReleaseNum >= 16000) {
+        if (slimNotifications) {
             console.log("fallUpdate")
             var ipc = require("electron").ipcRenderer;
             var msg = {
