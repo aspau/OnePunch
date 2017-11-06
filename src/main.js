@@ -14,6 +14,10 @@ const url = require('url');
 const path = require('path');
 const SettingsScript = require('./scripts/settings_script');
 const Reminders = require('./scripts/reminders');
+const os = require('os');
+const osRelease = os.release();
+const osReleaseArray = osRelease.split(".");
+osReleaseNum = osReleaseArray[2];
 
 app.showExitPrompt = true;
 
@@ -169,11 +173,13 @@ function createMainWindow() {
         {
             label: 'How are we doing today?',
             click: function () {
-                /*SettingsScript.getSetting().then(function (returnedSettings) {
-                    createNotificationReminder(returnedSettings);
-                });*/
-
-                createRemindersWindow();
+                if (osReleaseNum >= 16000) {
+                    createRemindersWindow();
+                } else {
+                    SettingsScript.getSetting().then(function (returnedSettings) {
+                        createNotificationReminder(returnedSettings);
+                    });
+                }
             }
                 },
         {
