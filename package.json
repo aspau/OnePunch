@@ -15,10 +15,9 @@
   },
   "author": "aspau",
   "license": "MIT",
-  "dependencies": {
+  "dependencies": {,
     "electron-settings": "^3.1.4",
-    "electron-updater": "^2.16.1",
-    "electron-windows-notifications": "^1.1.16"
+    "electron-updater": "^2.16.1"
   },
   "build": {
     "appId": "com.app.onepunch",
