@@ -33,22 +33,3 @@ module.exports = {
 }
 
 
-/*
-
-Settings Example
-
-{
-    "logPath": {
-        "display": "I:\\library\\Access Services\\OnePunch\\OPTesting",
-        "primary": "i:\\library\\access services\\onepunch\\optesting",
-        "secondary": "i:\\access services\\onepunch\\optesting",
-        "tertiary": "\\\\fs9.american.edu\\shared\\library\\access services\\onepunch\\optesting"
-    },
-    "deskName": "upperlevel",
-    "hotKey": "F9",
-    "logStrategy": "network",
-    "reminders": "notifications",
-    "initialized": true
-}
-
-*/
