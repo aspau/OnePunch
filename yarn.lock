@@ -642,10 +642,6 @@ electron-settings@^3.1.4:
     clone "^2.1.1"
     jsonfile "^4.0.0"
 
-electron-toaster@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/electron-toaster/-/electron-toaster-2.0.4.tgz#ac7d7bb9f7ab04502972315502e912c767a4dfb2"
-
 electron-updater@^2.16.1:
   version "2.16.1"
   resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-2.16.1.tgz#29e85589ec31ae817ca05bcaf10358bd66119188"

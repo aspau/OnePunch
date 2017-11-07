@@ -11,6 +11,7 @@ if (osReleaseNum >= 16000) {
 module.exports = {
 
     notify: function (notificationTitle, notificationText, icon, hangTime) {
+        const iconPath = '../images/' + icon;
         if (slimNotifications) {
             console.log("fallUpdate")
             var ipc = require("electron").ipcRenderer;
@@ -20,11 +21,11 @@ module.exports = {
                 width: 440,
                 // height : 160, window will be autosized
                 timeout: hangTime,
-                focus: false // set focus back to main window
+                icon: iconPath
             };
             ipc.send('electron-toaster-message', msg);
         } else {
-            const iconPath = '../images/' + icon;
+
             const options = {
                 icon: iconPath,
                 body: notificationText

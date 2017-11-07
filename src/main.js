@@ -12,7 +12,9 @@ const {
 } = require('electron');
 const url = require('url');
 const path = require('path');
-const {autoUpdater} = require("electron-updater");
+const {
+    autoUpdater
+} = require("electron-updater");
 const SettingsScript = require('./scripts/settings_script');
 const Reminders = require('./scripts/reminders');
 const os = require('os');
@@ -44,12 +46,6 @@ app.setLoginItemSettings({
 
 const iconpath = path.join(__dirname, '/images/owl_ico_16.png');
 const BrowserWindow = electron.BrowserWindow;
-
-
-
-var Toaster = require('electron-toaster');
-var toaster = new Toaster();
-
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -216,16 +212,10 @@ function createMainWindow() {
         mainWindow.show();
     });
     appIcon.setContextMenu(contextMenu);
-    //mainWindow.on('close', function () {
-    //   mainWindow = null
-    //});
 
     mainWindow.on('close', (e) => {
         if (app.showExitPrompt) {
             e.preventDefault() // Prevents the window from closing
-
-            icon: '/Users/somebody/images/window.png'
-
             dialog.showMessageBox({
                 type: 'question',
                 buttons: ['Yes', 'No'],
@@ -235,7 +225,6 @@ function createMainWindow() {
             }, function (response) {
                 if (response === 0) { // Runs the following if 'Yes' is clicked
                     app.showExitPrompt = false
-                    // mainWindow = null
                     mainWindow.close()
                 }
             });
@@ -259,7 +248,6 @@ app.on('ready', function () {
             }
             createSplashScreen();
             createMainWindow()
-            toaster.init(mainWindow);
             autoUpdater.checkForUpdatesAndNotify();
         } else {
             createSettingsWindow();
@@ -310,6 +298,7 @@ function createNotificationReminder(returnedSettings) {
         mainWindow.webContents.send('reminderNotify', dailyPunchCount);
     });
 }
+
 ipcMain.on('settingsComplete', (event, arg) => {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
@@ -318,7 +307,6 @@ ipcMain.on('settingsComplete', (event, arg) => {
             }
             createSplashScreen();
             createMainWindow()
-            toaster.init(mainWindow);
             autoUpdater.checkForUpdatesAndNotify();
         } else {
             createSettingsWindow();
@@ -340,4 +328,70 @@ ipcMain.on('remindersChanged', () => {
 
 ipcMain.on('getCurrentCount', (event) => {
     createRemindersWindow();
+});
+
+
+var showToaster = function (msg) {
+    var self = this;
+    this.window = new BrowserWindow({
+        width: msg.width,
+        transparent: false,
+        frame: false,
+        show: false,
+        "skip-taskbar": true,
+        "always-on-top": true,
+        title: "OnePunch",
+        icon: iconpath,
+        alwaysOnTop: true
+    });
+    var timer, height, width;
+    var screen = electron.screen;
+    var pos = mainWindow.getPosition();
+    var display = screen.getDisplayNearestPoint({
+        x: pos[0],
+        y: pos[1]
+    });
+    this.window.on('closed', function () {
+        try {
+            clearTimeout(timer);
+            self.window = null;
+        } catch (e) {}
+    });
+    var moveWindow = function (pos, done) {
+        try {
+            self.window.setPosition(display.workAreaSize.width - width - 4, pos);
+        } catch (e) {} finally {
+            done();
+        }
+    };
+    var i = 0;
+    var slideUp = function (cb) {
+        if (i < height) {
+            i += Math.round(height / 10);
+            timer = setTimeout(function () {
+                moveWindow(display.workAreaSize.height - i, function () {
+                    if (i === Math.round(height / 10)) { // show after first pos set to avoid flicker.
+                        self.window.show();
+                    }
+                    slideUp(cb);
+                });
+            }, 1);
+        } else {
+            cb();
+        }
+    };
+    var htmlFile = 'file:\\\\' + __dirname + '\\views\\toastNotifications.html?';
+    htmlFile += htmlFile + 'foo=bar&title=' + encodeURIComponent(msg.title) + '&message=' + encodeURIComponent(msg.message) + "&timeout=" + (msg.timeout) + "&icon=" + (msg.icon);
+    this.window.loadURL(htmlFile);
+    this.window.webContents.on('did-finish-load', function () {
+        if (self.window) {
+            width = self.window.getSize()[0];
+            height = self.window.getSize()[1];
+            slideUp(function () {});
+        }
+    });
+};
+
+ipcMain.on('electron-toaster-message', function (event, msg) {
+    showToaster(msg);
 });
