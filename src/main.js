@@ -317,8 +317,9 @@ ipcMain.on('settingsComplete', (event, arg) => {
                 loopReminders(returnedSettings);
             }
             createSplashScreen();
-            createMainWindow();
-            settingsWindow.close();
+            createMainWindow()
+            toaster.init(mainWindow);
+            autoUpdater.checkForUpdatesAndNotify();
         } else {
             createSettingsWindow();
         }
