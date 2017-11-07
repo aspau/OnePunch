@@ -1,7 +1,7 @@
 {
   "name": "onepunch",
   "productName": "OnePunch",
-  "version": "1.1.1",
+  "version": "1.2.2",
   "description": "A logger for patron interactions",
   "main": "src/main.js",
   "scripts": {
@@ -18,7 +18,8 @@
   "dependencies": {
     "electron-settings": "^3.1.4",
     "electron-toaster": "^2.0.4",
-    "electron-updater": "^2.16.1"
+    "electron-updater": "^2.16.1",
+    "os": "^0.1.1"
   },
   "build": {
     "appId": "com.app.onepunch",
