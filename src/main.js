@@ -28,7 +28,15 @@ if (osReleaseNum >= 16000) {
     slimNotifications = false;
 }
 
-app.showExitPrompt = true;
+SettingsScript.getSetting('fakeSetting').then(function (returnedSetting) {
+
+});
+
+
+
+
+app.preventExit = true;
+
 
 
 const appFolder = path.dirname(process.execPath)
@@ -101,6 +109,43 @@ function createSplashScreen() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         splashScreen = null
+    });
+}
+
+function createUpdateSummaryWindow() {
+    let updateSummary;
+    // Create the browser window.
+    updateSummary = new BrowserWindow({
+        width: 350,
+        //height: 300,
+        //frame: false,
+        resizable: false,
+        center: true,
+        maximizable: false,
+        fullscreenable: false,
+        title: "OnePunch",
+        icon: iconpath,
+        show: false
+    });
+
+    // and load the html of the app.
+    updateSummary.loadURL(url.format({
+        pathname: path.join(__dirname, '/views/updateSummary.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    updateSummary.once('ready-to-show', () => {
+        updateSummary.show();
+        SettingsScript.saveSetting('showUpdateSummary', false);
+    });
+
+    // Emitted when the window is closed.
+    updateSummary.on('closed', function () {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        updateSummary = null
     });
 }
 
@@ -195,7 +240,7 @@ function createMainWindow() {
             label: 'Quit',
             click: function () {
                 app.isQuiting = true;
-                app.showExitPrompt = false;
+                app.preventExit = false;
                 app.quit();
 
             }
@@ -213,21 +258,11 @@ function createMainWindow() {
     });
     appIcon.setContextMenu(contextMenu);
 
-    mainWindow.on('close', (e) => {
-        if (app.showExitPrompt) {
-            e.preventDefault() // Prevents the window from closing
-            dialog.showMessageBox({
-                type: 'question',
-                buttons: ['Yes', 'No'],
-                title: 'Confirm',
-                icon: iconpath,
-                message: 'Are you sure you want to quit?'
-            }, function (response) {
-                if (response === 0) { // Runs the following if 'Yes' is clicked
-                    app.showExitPrompt = false
-                    mainWindow.close()
-                }
-            });
+    mainWindow.on('close', (event) => {
+        if (app.preventExit) {
+            event.preventDefault() // Prevents the window from closing
+            event.preventDefault();
+            mainWindow.hide();
         }
     });
 
@@ -248,7 +283,13 @@ app.on('ready', function () {
             }
             createSplashScreen();
             createMainWindow()
-            autoUpdater.checkForUpdatesAndNotify();
+            autoUpdater.checkForUpdatesAndNotify().then(function (updateAvailable) {
+                if (updateAvailable === false) {
+                    if (returnedSettings.showUpdateSummary) {
+                        createUpdateSummaryWindow();
+                    }
+                }
+            });
         } else {
             createSettingsWindow();
         }
@@ -270,6 +311,19 @@ app.on('activate', function () {
     if (mainWindow === null) {
         createMainWindow();
     }
+});
+
+autoUpdater.on('update-downloaded', () => {
+    dialog.showMessageBox({
+        title: 'Install Updates',
+        message: 'Updates downloaded, application will install updates and restart'
+    }, () => {
+        SettingsScript.saveSetting('showUpdateSummary', true).then(function (returnedSettings) {
+            app.preventExit = false;
+            setImmediate(() => autoUpdater.quitAndInstall(true, true));
+        });
+
+    });
 });
 
 
@@ -307,7 +361,13 @@ ipcMain.on('settingsComplete', (event, arg) => {
             }
             createSplashScreen();
             createMainWindow()
-            autoUpdater.checkForUpdatesAndNotify();
+            autoUpdater.checkForUpdatesAndNotify().then(function (updateAvailable) {
+                if (updateAvailable === false) {
+                    if (returnedSettings.showUpdateSummary) {
+                        createUpdateSummaryWindow();
+                    }
+                }
+            });
         } else {
             createSettingsWindow();
         }

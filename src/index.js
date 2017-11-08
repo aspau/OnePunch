@@ -12,7 +12,8 @@ const OfficeStrategy = require('./scripts/officeStrategy');
 
 const {
     globalShortcut,
-    dialog
+    dialog,
+    app
 } = require('electron').remote;
 
 const {
@@ -280,3 +281,6 @@ ipcRenderer.on('reminderNotify', (event, arg) => {
     }
 
 });
+
+const appVersion = app.getVersion();
+document.getElementById('appVersion').textContent = 'v ' + appVersion;

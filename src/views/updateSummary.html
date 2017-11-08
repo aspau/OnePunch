@@ -17,19 +17,23 @@
             <img class="ui centered image" src="../images/owl_ico_128.png" alt="One Punch Icon">
         </div>
         <div class="fourteen wide column">
-            <p style="text-align: center;font-family: monospace;" id='appVersion'><strong></strong></p>
+            <p style="text-align: center;"><strong>Here's What's Changed in <span id="appVersion"></span></strong></p>
+            <ul>
+                <li>Minimizes without quitting when you close the main window. To quit the program right click on the icon in the taskbar and choose quit.</li>
+                <li>Program updates now trigger automatic restart.</li>
+                <li>Miscellaneous big fixes.</li>
+            </ul>
         </div>
     </div>
 </body>
 
 <script>
-
     const {
         app
     } = require('electron').remote;
 
     const appVersion = app.getVersion();
-    document.getElementById('appVersion').textContent = 'v ' + appVersion;
+    document.getElementById('appVersion').textContent = appVersion;
 
 </script>
 
