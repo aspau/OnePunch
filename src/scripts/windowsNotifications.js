@@ -13,7 +13,6 @@ module.exports = {
     notify: function (notificationTitle, notificationText, icon, hangTime) {
         const iconPath = '../images/' + icon;
         if (slimNotifications) {
-            console.log("fallUpdate")
             var ipc = require("electron").ipcRenderer;
             var msg = {
                 title: notificationTitle,
@@ -31,7 +30,6 @@ module.exports = {
                 body: notificationText
             };
             const notification = new Notification(notificationTitle, options);
-            console.log(notification);
             notification.onshow = function () {
                 setTimeout(function () {
                     notification.close();

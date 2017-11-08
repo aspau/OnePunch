@@ -117,8 +117,7 @@ function createUpdateSummaryWindow() {
     // Create the browser window.
     updateSummary = new BrowserWindow({
         width: 350,
-        //height: 300,
-        //frame: false,
+        useContentSize: true,
         resizable: false,
         center: true,
         maximizable: false,
@@ -147,6 +146,8 @@ function createUpdateSummaryWindow() {
         // when you should delete the corresponding element.
         updateSummary = null
     });
+
+    updateSummary.setMenu(null);
 }
 
 function createRemindersWindow() {
