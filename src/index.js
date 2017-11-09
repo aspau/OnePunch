@@ -18,7 +18,8 @@ const {
 
 const {
     ipcRenderer,
-    remote
+    remote,
+    screen
 } = require('electron');
 var main = remote.require("./main.js");
 const path = require('path');
@@ -284,3 +285,9 @@ ipcRenderer.on('reminderNotify', (event, arg) => {
 
 const appVersion = app.getVersion();
 document.getElementById('appVersion').textContent = 'v ' + appVersion;
+
+const monitorScreen = screen.getPrimaryDisplay();
+const monitorScreenHeight = monitorScreen.workAreaSize.height;
+if (monitorScreenHeight <  850) {
+    document.body.style.overflowY = "scroll";
+}

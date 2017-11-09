@@ -5,7 +5,8 @@ const FileDialog = require("./scripts/getFileDialog");
 
 const {
     ipcRenderer,
-    remote
+    remote,
+    screen
 } = require('electron');
 const {
     dialog
@@ -71,3 +72,9 @@ document.getElementById("saveBtn").addEventListener("click", function () {
         });
     }
 });
+
+const monitorScreen = screen.getPrimaryDisplay();
+const monitorScreenHeight = monitorScreen.workAreaSize.height;
+if (monitorScreenHeight <  850) {
+    document.body.style.overflowY = "scroll";
+}

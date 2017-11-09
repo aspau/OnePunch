@@ -28,16 +28,7 @@ if (osReleaseNum >= 16000) {
     slimNotifications = false;
 }
 
-SettingsScript.getSetting('fakeSetting').then(function (returnedSetting) {
-
-});
-
-
-
-
 app.preventExit = true;
-
-
 
 const appFolder = path.dirname(process.execPath)
 const exeName = path.basename(process.execPath)
@@ -284,13 +275,10 @@ app.on('ready', function () {
             }
             createSplashScreen();
             createMainWindow()
-            autoUpdater.checkForUpdatesAndNotify().then(function (updateAvailable) {
-                if (updateAvailable === false) {
-                    if (returnedSettings.showUpdateSummary) {
-                        createUpdateSummaryWindow();
-                    }
-                }
-            });
+            autoUpdater.checkForUpdates();
+            if (returnedSettings.showUpdateSummary) {
+                createUpdateSummaryWindow();
+            }
         } else {
             createSettingsWindow();
         }
@@ -361,14 +349,12 @@ ipcMain.on('settingsComplete', (event, arg) => {
                 loopReminders(returnedSettings);
             }
             createSplashScreen();
-            createMainWindow()
-            autoUpdater.checkForUpdatesAndNotify().then(function (updateAvailable) {
-                if (updateAvailable === false) {
-                    if (returnedSettings.showUpdateSummary) {
-                        createUpdateSummaryWindow();
-                    }
-                }
-            });
+            createMainWindow();
+            settingsWindow.close();
+            autoUpdater.checkForUpdates();
+            if (returnedSettings.showUpdateSummary) {
+                createUpdateSummaryWindow();
+            }
         } else {
             createSettingsWindow();
         }
