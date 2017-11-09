@@ -4,6 +4,7 @@ module.exports = {
     saveLocalLog: function (settingsLogObject) {
         return new Promise(function (resolve, reject) {
             if (settingsLogObject.localLogs) {
+                let localLogs = settingsLogObject.localLogs;
                 localLogs.push(settingsLogObject.logObject);
                 SettingsScript.saveSetting('localLogs', localLogs);
                 resolve(settingsLogObject.logObject);

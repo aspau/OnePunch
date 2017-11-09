@@ -170,7 +170,7 @@ function createRemindersWindow() {
 function createSettingsWindow() {
     settingsWindow = new BrowserWindow({
         width: 350,
-        height: 850,
+        height: 925,
         resizable: false,
         show: true,
         center: true,
@@ -193,8 +193,8 @@ function createSettingsWindow() {
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 350,
-        height: 800,
-        //resizable: false,
+        height: 875,
+        resizable: false,
         show: false,
         center: true,
         maximizable: false,
@@ -261,7 +261,7 @@ function createMainWindow() {
     mainWindow.on('closed', function () {
         mainWindow = null
     });
-    //mainWindow.setMenu(null);
+    mainWindow.setMenu(null);
 }
 
 // This method will be called when Electron has finished
@@ -337,8 +337,9 @@ function loopReminders(returnedSettings) {
 };
 
 function createNotificationReminder(returnedSettings) {
-    Reminders.getDailyPunches(returnedSettings).then(function (dailyPunchCount) {
-        mainWindow.webContents.send('reminderNotify', dailyPunchCount);
+    Reminders.getDailyPunches(returnedSettings).then(function (dailyPunchCountObj) {
+        dailyPunchCountObj.assumeDisconnected = returnedSettings.assumeDisconnected;
+        mainWindow.webContents.send('reminderNotify', dailyPunchCountObj);
     });
 }
 

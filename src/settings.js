@@ -34,6 +34,8 @@ document.getElementById("officePicker").addEventListener("click", function () {
     //do whatever is needed to switch to using office
 });
 
+assumeDisconnectedCheck
+
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
     let deskName = deskNameEntry.trim();
@@ -42,6 +44,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     let remindersChoice = document.querySelector('input[name="reminders"]:checked').value;
     let chosenDir = document.getElementById("logPath").value;
     let logStrategy = document.getElementById("logStrategy").value;
+    let assumeDisconnected = document.getElementById('assumeDisconnectedCheck').checked;
     let settingsObj = {};
     if (deskName != "" && chosenDir != "") {
         GetLogLocations.getLogLocations(chosenDir, logStrategy).then(function (logPath) {
@@ -54,6 +57,8 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                     return SettingsScript.saveSetting('logStrategy', logStrategy);
                 }).then(function (settingSaved) {
                     return SettingsScript.saveSetting('reminders', remindersChoice);
+                }).then(function (settingSaved) {
+                    return SettingsScript.saveSetting('assumeDisconnected', assumeDisconnected);
                 }).then(function (settingSaved) {
                     return SettingsScript.saveSetting('initialized', true);
                 }).then(function (settingSaved) {
@@ -75,6 +80,6 @@ document.getElementById("saveBtn").addEventListener("click", function () {
 
 const monitorScreen = screen.getPrimaryDisplay();
 const monitorScreenHeight = monitorScreen.workAreaSize.height;
-if (monitorScreenHeight <  850) {
+if (monitorScreenHeight < 925) {
     document.body.style.overflowY = "scroll";
 }

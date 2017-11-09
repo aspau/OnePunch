@@ -56,10 +56,11 @@ document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
 // load data and change settings tab to match current settings
 
 SettingsScript.getSetting().then(function (returnedSettings) {
-    const hotKey = returnedSettings.hotKey;
-    const deskName = returnedSettings.deskName;
-    const reminders = returnedSettings.reminders;
-    const logStrategy = returnedSettings.logStrategy;
+    let hotKey = returnedSettings.hotKey || "F9";
+    let deskName = returnedSettings.deskName || "Desk";
+    let reminders = returnedSettings.reminders || false;
+    let logStrategy = returnedSettings.logStrategy || "network";
+    let assumeDisconnected = returnedSettings.assumeDisconnected || false;
     setHotKey(hotKey);
     document.getElementById("deskPicker").value = deskName;
     document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
@@ -72,9 +73,10 @@ SettingsScript.getSetting().then(function (returnedSettings) {
             radioBtn.checked = true;;
         }
     });
+    document.getElementById("assumeDisconnectedCheck").checked = assumeDisconnected;
     document.getElementById("currentHotKey").value = hotKey;
-    const logPath = returnedSettings.logPath.display;
-    const logPathValue = returnedSettings.logPath.display;
+    const logPath = returnedSettings.logPath.display || "Not defined";
+    const logPathValue = returnedSettings.logPath.display || "Not defined";
     document.getElementById("logPath").value = logPathValue;
     document.getElementById("logStrategy").value = logStrategy;
     document.getElementById('logFolderName').textContent = logPath;
@@ -89,6 +91,12 @@ SettingsScript.getSetting().then(function (returnedSettings) {
         }
     });
 });
+
+
+
+
+
+
 
 
 document.getElementById("logBtn").addEventListener("click", function () {
@@ -230,6 +238,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     document.getElementById("currentHotKey").value = hotKeyChoice;
     let chosenDir = document.getElementById("logPath").value;
     let logStrategy = document.getElementById("logStrategy").value;
+    let assumeDisconnected = document.getElementById('assumeDisconnectedCheck').checked;
     let settingsObj = {};
     if (deskName != "" && chosenDir != "") {
         GetLogLocations.getLogLocations(chosenDir, logStrategy).then(function (logPath) {
@@ -241,11 +250,11 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                 }).then(function (settingSaved) {
                     return SettingsScript.saveSetting('logStrategy', logStrategy);
                 }).then(function (settingSaved) {
-                    // ipcRenderer.send('remindersChanged', remindersChoice);
-                    // return SettingsScript.saveSetting('reminders', remindersChoice);
                     return SettingsScript.saveSetting('reminders', remindersChoice);
                 }).then(function (settingSaved) {
                     ipcRenderer.send('remindersChanged');
+                }).then(function (settingSaved) {
+                    return SettingsScript.saveSetting('assumeDisconnected', assumeDisconnected);
                 }).then(function (settingSaved) {
                     globalShortcut.unregister(currentHotKey);
                     setHotKey(hotKeyChoice);
@@ -273,21 +282,25 @@ document.getElementById("saveBtn").addEventListener("click", function () {
 });
 
 
-ipcRenderer.on('reminderNotify', (event, arg) => {
-    if (arg !== false) {
-        let notificationTitle = "You've helped " + arg + " people today!";
+ipcRenderer.on('reminderNotify', (event, dailyPunchCountObj) => {
+    let dailyPunchCount = dailyPunchCountObj.punchCount;
+    if (dailyPunchCountObj.sharedPunches !== false) {
+        let notificationTitle = "You've helped " + dailyPunchCount + " people today!";
         WindowsNotifications.notify(notificationTitle, "Keep on punching!", "owl_ico_64.png", 2000)
     } else {
-        WindowsNotifications.notify("Cannot connect!", "Please connect to network drive", "exclamation_mark_64.png", 3500);
+        if (dailyPunchCountObj.assumeDisconnected) {
+            let notificationTitle = "You've helped " + dailyPunchCount + " people today!";
+            WindowsNotifications.notify(notificationTitle, "Keep on punching!", "owl_ico_64.png", 2000)
+        } else {
+            WindowsNotifications.notify("Cannot connect!", "Please connect to network drive", "exclamation_mark_64.png", 3500);
+        }
     }
-
 });
 
 const appVersion = app.getVersion();
 document.getElementById('appVersion').textContent = 'v ' + appVersion;
-
 const monitorScreen = screen.getPrimaryDisplay();
 const monitorScreenHeight = monitorScreen.workAreaSize.height;
-if (monitorScreenHeight <  850) {
+if (monitorScreenHeight < 925) {
     document.body.style.overflowY = "scroll";
 }

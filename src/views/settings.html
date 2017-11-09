@@ -14,7 +14,7 @@
             <h2>Just a couple of things to decide before we get going...</h2>
         </div>
         <div class="fourteen wide column">
-            <h2>Data Storage</h2>
+            <h2 class="tooltip">Data Storage<span class="tooltiptext">Tooltip text</span></h2>
         </div>
         <div class="twelve wide column">
             <span id="logFolderName">Choose where you'd like to save logs</span>
@@ -27,7 +27,7 @@
         <input id="logPath" type="hidden" name="userSetting" value="">
         <input id="logStrategy" type="hidden" name="userSetting" value="">
         <div class="fourteen wide column">
-            <h2>HotKey</h2>
+            <h2 class="tooltip">HotKey<span class="tooltiptext">Tooltip text</span></h2>
         </div>
         <div class="twelve wide column">
             <div class="field">
@@ -45,7 +45,7 @@
             <input id="currentHotKey" type="hidden" name="userSetting" value="">
         </div>
         <div class="fourteen wide column">
-            <h2>Reminders</h2>
+            <h2 class="tooltip">Reminders<span class="tooltiptext">Tooltip text</span></h2>
         </div>
         <div class="twelve wide column">
             <div class="field">
@@ -62,7 +62,14 @@
             </div>
         </div>
         <div class="fourteen wide column">
-            <h2>Desk</h2>
+            <h2 class="tooltip">Connection Status<span class="tooltiptext">Tooltip text</span></h2>
+        </div>
+        <div class="ui slider checkbox twelve wide column">
+            <input id="assumeDisconnectedCheck" type="checkbox" name="details">
+            <label>Assume No Connection</label>
+        </div>
+        <div class="fourteen wide column">
+            <h2 class="tooltip">Desk<span class="tooltiptext">Tooltip text</span></h2>
         </div>
         <div class="twelve wide column">
             <div class="ui input large">
