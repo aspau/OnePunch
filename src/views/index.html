@@ -39,6 +39,8 @@
         </div>
     </div>
     <div id="reportsTab" class="tabContent ui grid middle aligned centered" style="display:none;">
+        <div class="twelve wide column">
+        </div>
         <div class="fourteen wide column">
             <h2>Date Range</h2>
             <p>(inclusive)</p>
@@ -76,7 +78,7 @@
     </div>
     <div id="settingsTab" class="tabContent ui grid middle aligned centered" style="display:none;">
         <div class="fourteen wide column">
-            <h2 class="tooltip">Data Storage<span class="tooltiptext">Tooltip text</span></h2>
+            <h2 class="tooltip">Data Storage<span class="tooltiptext">The shared location where interactions will be logged. Be sure to pick the same folder for all the computers in your unit.</span></h2>
         </div>
         <div class="twelve wide column">
             <span id="logFolderName">Choose where you'd like to save logs</span>
@@ -89,7 +91,7 @@
         <input id="logPath" type="hidden" name="userSetting" value="">
         <input id="logStrategy" type="hidden" name="userSetting" value="">
         <div class="fourteen wide column">
-            <h2 class="tooltip">HotKey<span class="tooltiptext">Tooltip text</span></h2>
+            <h2 class="tooltip">HotKey<span class="tooltiptext">Only one program is allowed to use a single hotkey at once. Be careful not to choose a key that's already being used elsewhere.</span></h2>
         </div>
         <div class="twelve wide column">
             <div class="field">
@@ -107,7 +109,7 @@
             <input id="currentHotKey" type="hidden" name="userSetting" value="">
         </div>
         <div class="fourteen wide column">
-            <h2 class="tooltip">Reminders<span class="tooltiptext">Tooltip text</span></h2>
+            <h2 class="tooltip">Reminders<span class="tooltiptext">Reminders will show about once an hour letting you know how many people your desk has helped that day. Popups are a new window in the center of the screen; notifications display in the lower corner.</span></h2>
         </div>
         <div class="twelve wide column">
             <div class="field">
@@ -124,14 +126,14 @@
             </div>
         </div>
         <div class="fourteen wide column">
-            <h2 class="tooltip">Connection Status<span class="tooltiptext">Tooltip text</span></h2>
+            <h2 class="tooltip">Connection Status<span class="tooltiptext">This setting reduces connection error warnings. Use it for desks that won't usually be connected to the shared drive.</span></h2>
         </div>
         <div class="ui slider checkbox twelve wide column">
             <input id="assumeDisconnectedCheck" type="checkbox" name="assumeDisconnected">
             <label>Assume no connection</label>
         </div>
         <div class="fourteen wide column">
-            <h2 class="tooltip">Desk<span class="tooltiptext">Tooltip text</span></h2>
+            <h2 class="tooltip">Desk<span class="tooltiptext">Use the same name for all computers at the same desk.</span></h2>
         </div>
         <div class="twelve wide column">
             <div class="ui input large">
