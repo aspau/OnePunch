@@ -10,6 +10,7 @@ module.exports = {
         return new Promise(function (resolve, reject) {
             SettingsScript.getSetting()
                 .then(function (returnedSettings) {
+                    settings = returnedSettings;
                     if (returnedSettings.localLogs) {
                         if (returnedSettings.logStrategy === "network") {
                             return NetworkStrategy.moveLocalText(returnedSettings);
@@ -22,7 +23,10 @@ module.exports = {
                         return 0;
                     }
                 }).then(function (logsMoved) {
-                    resolve(logsMoved);
+                    logsMovedObj = {};
+                    logsMovedObj.logsMoved = logsMoved;
+                    logsMovedObj.selectedIcon = settings.selectedIcon || "owl_ico";
+                    resolve(logsMovedObj);
                 }).catch(function (error) {
                     console.log("Failed!", error);
                 });

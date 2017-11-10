@@ -84,7 +84,8 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     document.getElementById("logPath").value = logPathValue;
     document.getElementById("logStrategy").value = logStrategy;
     document.getElementById('logFolderName').textContent = logPath;
-    MoveLocalText.moveText().then(function (logsMoved) {
+    MoveLocalText.moveText().then(function (logsMovedObj) {
+        let logsMoved = logsMovedObj.logsMoved;
         if (logsMoved !== false) {
             if (logsMoved > 0) {
                 let notifyMessage = "Moved " + logsMoved + " logs from local storage to shared file";
@@ -104,14 +105,17 @@ document.getElementById("checkTotalsBtn").addEventListener("click", function () 
 });
 
 document.getElementById("moveLocalBtn").addEventListener("click", function () {
-    MoveLocalText.moveText().then(function (logsMoved) {
+    MoveLocalText.moveText().then(function (logsMovedObj) {
+        let logsMoved = logsMovedObj.logsMoved;
+        let selectedIcon = logsMovedObj.selectedIcon;
+        let selectedIconName = selectedIcon + "_64.png";
         if (logsMoved !== false) {
             if (logsMoved > 0) {
                 let notifyMessage = "Moved " + logsMoved + " logs from local storage to shared file";
-                WindowsNotifications.notify("Update!", notifyMessage, "owl_ico_64.png", 3500);
+                WindowsNotifications.notify("Update!", notifyMessage, selectedIconName, 3500);
             } else {
                 let notifyMessage = "No local logs to move";
-                WindowsNotifications.notify("Update!", notifyMessage, "owl_ico_64.png", 3500);
+                WindowsNotifications.notify("Update!", notifyMessage, selectedIconName, 3500);
             }
         } else {
             WindowsNotifications.notify("Cannot connect!", "Logs will save locally until connected to network drive", "exclamation_mark_64.png", 3500);
