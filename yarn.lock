@@ -331,8 +331,8 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
 color-convert@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.0.tgz#1accf97dd739b983bf994d56fec8f95853641b7a"
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.1.tgz#c1261107aeb2f294ebffec9ed9ecad529a6097ed"
   dependencies:
     color-name "^1.1.1"
 
@@ -510,8 +510,8 @@ ejs@^2.5.7:
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-2.5.7.tgz#cc872c168880ae3c7189762fd5ffc00896c9518a"
 
 electron-builder@^19.45.0:
-  version "19.45.1"
-  resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-19.45.1.tgz#4f312b0b649dcc6252a99836724bc594ade7142d"
+  version "19.45.5"
+  resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-19.45.5.tgz#67a949d71cd2e947efd333fc9a933bd36c552cc6"
   dependencies:
     "7zip-bin" "^2.2.7"
     app-package-builder "1.5.0"
