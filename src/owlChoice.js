@@ -3,6 +3,16 @@ const {
 } = require('electron');
 const SettingsScript = require("./scripts/settings_script");
 
+SettingsScript.getSetting("selectedIcon").then(function(selectedIconId){
+    var owlIcons = document.querySelectorAll(".owlIcon");
+        for (var i = 0; i < owlIcons.length; i++) {
+            if (owlIcons[i].id == selectedIconId) {
+                owlIcons[i].classList.add("selectedOwl");
+                document.getElementById('selectedOwl').value = selectedIconId;
+            }
+        }
+})
+
 document.body.addEventListener("click", function (event) {
     if (event.target.classList.contains("owlIcon")) {
         var selectedIconId = event.target.id;

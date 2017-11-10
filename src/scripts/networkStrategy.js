@@ -200,8 +200,7 @@ module.exports = {
                         if (err) {
                             fs.readFile(tertiary, "utf8", (err, data) => {
                                 if (err) {
-                                    console.log(err)
-                                    resolve(false);
+                                    reject("connection error");
                                 } else {
                                     const logArray = data.split("\n");
                                     for (i = 0; i < logArray.length - 1; i++) {

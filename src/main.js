@@ -141,6 +141,43 @@ function createUpdateSummaryWindow() {
     updateSummary.setMenu(null);
 }
 
+function createAboutWindow() {
+    let aboutWindow;
+    // Create the browser window.
+    aboutWindow = new BrowserWindow({
+        width: 350,
+        useContentSize: true,
+        resizable: false,
+        center: true,
+        maximizable: false,
+        fullscreenable: false,
+        title: "OnePunch",
+        icon: iconpath,
+        show: false
+    });
+
+    // and load the html of the app.
+    aboutWindow.loadURL(url.format({
+        pathname: path.join(__dirname, '/views/about.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    aboutWindow.once('ready-to-show', () => {
+        aboutWindow.show();
+    });
+
+    // Emitted when the window is closed.
+    aboutWindow.on('closed', function () {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        aboutWindow = null
+    });
+
+    aboutWindow.setMenu(null);
+}
+
 function createOwlChoiceWindow() {
     // Create the browser window.
     owlChoice = new BrowserWindow({
@@ -483,6 +520,10 @@ ipcMain.on('electron-toaster-message', function (event, msg) {
 
 ipcMain.on('showOwlWindow', function (event) {
     createOwlChoiceWindow();
+});
+
+ipcMain.on('showAboutWindow', function (event) {
+    createAboutWindow();
 });
 
 ipcMain.on('owlSelected', function (event, selectedOwl) {

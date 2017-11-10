@@ -3,6 +3,7 @@ const SettingsScript = require('./settings_script');
 const NetworkStrategy = require('./networkStrategy');
 const GoogleStrategy = require('./googleStrategy');
 const OfficeStrategy = require('./officeStrategy');
+const WindowsNotifications = require("./windowsNotifications");
 
 function sortLogObjectArray(objectArray, showDetailByDesk, showDetailByHour) {
     return new Promise(function (resolve, reject) {
@@ -225,7 +226,9 @@ module.exports = {
                 }).then(function (reportingComplete) {
                     resolve(reportingComplete);
                 }).catch(function (error) {
-                    console.log("Failed!", error);
+                    if (error === "connection error") {
+                        WindowsNotifications.notify("Cannot connect!", "Please connect to network drive", "exclamation_mark_64.png", 3500);
+                    }
                 });
         });
     }

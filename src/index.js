@@ -301,8 +301,11 @@ ipcRenderer.on('reminderNotify', (event, dailyPunchCountObj) => {
 });
 
 document.getElementById("mainOwlIcon").addEventListener("click", function () {
-    console.log("You clicked me");
     ipcRenderer.send('showOwlWindow');
+});
+
+document.getElementById("showAbout").addEventListener("click", function () {
+    ipcRenderer.send('showAboutWindow');
 });
 
 ipcRenderer.on('newOwl', (event, owlPicked) => {
