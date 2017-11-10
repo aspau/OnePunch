@@ -27,10 +27,9 @@
         <div class="fourteen wide column">
             <p style="text-align: center;"><strong>Here's what's changed in <span id="appVersion"></span></strong></p>
             <ul>
-                <li>Minimizes without quitting when you close the main window. To quit the program: right click on the icon in the tray and choose "Quit".</li>
-                <li>Program updates now trigger automatic restart and show an update summary (like this one) on the next restart.</li>
-                <li>New options in setting menu to reduce connection error warnings for desks that aren't usually connected to the shared drive.</li>
-                <li>Tooltips display on hover over settings headings.</li>
+                <li>Choose your own owl-vatar! Change the icon that displays on alerts by clicking on the image on the home screen.</li>
+                <li>About page with license and image attribution.</li>
+                <li>Added warning to reports function when not connected to shared drive.</li>
                 <li>Miscellaneous bug fixes.</li>
             </ul>
         </div>
@@ -41,10 +40,8 @@
     const {
         app
     } = require('electron').remote;
-
     const appVersion = app.getVersion();
     document.getElementById('appVersion').textContent = appVersion;
-
 </script>
 
 </html>
