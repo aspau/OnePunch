@@ -141,6 +141,43 @@ function createUpdateSummaryWindow() {
     updateSummary.setMenu(null);
 }
 
+function createOwlChoiceWindow() {
+    // Create the browser window.
+    owlChoice = new BrowserWindow({
+        useContentSize: true,
+        resizable: false,
+        center: true,
+        maximizable: false,
+        fullscreenable: false,
+        title: "OnePunch",
+        icon: iconpath,
+        width: 580,
+        height: 725,
+        show: false
+    });
+
+    // and load the html of the app.
+    owlChoice.loadURL(url.format({
+        pathname: path.join(__dirname, '/views/owlChoice.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    owlChoice.once('ready-to-show', () => {
+        owlChoice.show();
+    });
+
+    // Emitted when the window is closed.
+    owlChoice.on('closed', function () {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        updateSummary = null
+    });
+
+    owlChoice.setMenu(null);
+}
+
 function createRemindersWindow() {
     remindersWindow = new BrowserWindow({
         width: 350,
@@ -442,4 +479,13 @@ var showToaster = function (msg) {
 
 ipcMain.on('electron-toaster-message', function (event, msg) {
     showToaster(msg);
+});
+
+ipcMain.on('showOwlWindow', function (event) {
+    createOwlChoiceWindow();
+});
+
+ipcMain.on('owlSelected', function (event, selectedOwl) {
+    owlChoice.close();
+    mainWindow.webContents.send('newOwl', selectedOwl);
 });

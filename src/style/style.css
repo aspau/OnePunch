@@ -42,3 +42,31 @@ button#datepicker-button {
     visibility: visible;
     opacity: 1;
 }
+
+.selectedOwl {
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 20px;
+}
+
+.main-owl {
+	position: relative;
+	display: inline-block;
+}
+
+.main-owl:hover .edit {
+	display: block;
+}
+
+.edit {
+	padding-top: 7px;
+	padding-right: 7px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	display: none;
+}
+
+.edit a {
+	color: #000;
+}

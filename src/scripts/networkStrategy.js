@@ -35,6 +35,8 @@ module.exports = {
             const tertiaryLogPath = settingsLogObject.logPath.tertiary;
             const logObject = settingsLogObject.logObject;
             const assumeDisconnected = settingsLogObject.assumeDisconnected;
+            const selectedIcon = settingsLogObject.selectedIcon || "owl_ico";
+            const selectedIconName = selectedIcon + "_64.png";
             const currentWeekday = logObject.currentWeekday;
             const currentMonth = logObject.currentMonth;
             const currentDateString = logObject.currentDateString;
@@ -73,7 +75,7 @@ module.exports = {
                                                 SaveLocalLog.saveLocalLog(settingsLogObject).then(function (logObject) {
                                                     console.log(assumeDisconnected + " assume")
                                                     if (assumeDisconnected) {
-                                                        WindowsNotifications.notify("Logged!", "Logged to local file!", "owl_ico_64.png", 2000)
+                                                        WindowsNotifications.notify("Logged!", "Logged to local file!", selectedIconName, 2000)
                                                         resolve(logObject);
                                                     } else {
                                                         WindowsNotifications.notify("Logged locally!", "Please connect to shared drive.", "exclamation_mark_64.png", 3500);
@@ -81,17 +83,17 @@ module.exports = {
                                                     }
                                                 });
                                             } else {
-                                                WindowsNotifications.notify("Logged!", "Logged to shared file!", "owl_ico_64.png", 2000)
+                                                WindowsNotifications.notify("Logged!", "Logged to shared file!", selectedIconName, 2000)
                                                 resolve(logObject);
                                             }
                                         });
                                 } else {
-                                    WindowsNotifications.notify("Logged!", "Logged to shared file!", "owl_ico_64.png", 2000)
+                                    WindowsNotifications.notify("Logged!", "Logged to shared file!", selectedIconName, 2000)
                                     resolve(logObject);
                                 }
                             });
                     } else {
-                        WindowsNotifications.notify("Logged!", "Logged to shared file", "owl_ico_64.png", 2000)
+                        WindowsNotifications.notify("Logged!", "Logged to shared file", selectedIconName, 2000)
                         resolve(logObject);
                     }
                 });

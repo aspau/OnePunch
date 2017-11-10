@@ -61,6 +61,10 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     let reminders = returnedSettings.reminders || false;
     let logStrategy = returnedSettings.logStrategy || "network";
     let assumeDisconnected = returnedSettings.assumeDisconnected || false;
+    let selectedIcon = returnedSettings.selectedIcon || "owl_ico";
+    let selectedIconName = selectedIcon + "_64.png";
+    let icon128Path = "../images/" + selectedIcon + "_128.png";
+    document.getElementById('mainOwlIconImage').src = icon128Path;
     setHotKey(hotKey);
     document.getElementById("deskPicker").value = deskName;
     document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
@@ -84,20 +88,13 @@ SettingsScript.getSetting().then(function (returnedSettings) {
         if (logsMoved !== false) {
             if (logsMoved > 0) {
                 let notifyMessage = "Moved " + logsMoved + " logs from local storage to shared file";
-                WindowsNotifications.notify("Update!", notifyMessage, "owl_ico_64.png", 3500);
+                WindowsNotifications.notify("Update!", notifyMessage, selectedIconName, 3500);
             }
         } else {
             WindowsNotifications.notify("Cannot connect!", "Logs will save locally until connected to network drive", "exclamation_mark_64.png", 3500);
         }
     });
 });
-
-
-
-
-
-
-
 
 document.getElementById("logBtn").addEventListener("click", function () {
     LogText.logText();
@@ -284,17 +281,29 @@ document.getElementById("saveBtn").addEventListener("click", function () {
 
 ipcRenderer.on('reminderNotify', (event, dailyPunchCountObj) => {
     let dailyPunchCount = dailyPunchCountObj.punchCount;
+    let selectedIcon = dailyPunchCountObj.selectedIcon || "owl_ico";
+    let selectedIconName = selectedIcon + "_64.png";
     if (dailyPunchCountObj.sharedPunches !== false) {
         let notificationTitle = "You've helped " + dailyPunchCount + " people today!";
-        WindowsNotifications.notify(notificationTitle, "Keep on punching!", "owl_ico_64.png", 2000)
+        WindowsNotifications.notify(notificationTitle, "Keep on punching!", selectedIconName, 2000)
     } else {
         if (dailyPunchCountObj.assumeDisconnected) {
             let notificationTitle = "You've helped " + dailyPunchCount + " people today!";
-            WindowsNotifications.notify(notificationTitle, "Keep on punching!", "owl_ico_64.png", 2000)
+            WindowsNotifications.notify(notificationTitle, "Keep on punching!", selectedIconName, 2000)
         } else {
             WindowsNotifications.notify("Cannot connect!", "Please connect to network drive", "exclamation_mark_64.png", 3500);
         }
     }
+});
+
+document.getElementById("mainOwlIcon").addEventListener("click", function () {
+    console.log("You clicked me");
+    ipcRenderer.send('showOwlWindow');
+});
+
+ipcRenderer.on('newOwl', (event, owlPicked) => {
+    let icon128Path = "../images/" + owlPicked + "_128.png";
+    document.getElementById('mainOwlIconImage').src = icon128Path;
 });
 
 const appVersion = app.getVersion();

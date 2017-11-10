@@ -4,6 +4,9 @@ const Reminders = require('./scripts/reminders')
 SettingsScript.getSetting()
     .then(function (returnedSettings) {
         Reminders.getDailyPunches(returnedSettings).then(function (dailyPunchCountObj) {
+            let selectedIcon = returnedSettings.selectedIcon || "owl_ico";
+            let icon128Path = "../images/" + selectedIcon + "_128.png";
+            document.getElementById("remindersImage").src = icon128Path;
             let dailyPunchCount = dailyPunchCountObj.punchCount;
             if (dailyPunchCountObj.sharedPunches !== false) {
                 let contentLineOne = "Your desk has helped " + dailyPunchCount + " people so far today!";
