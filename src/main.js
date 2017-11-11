@@ -286,8 +286,7 @@ function createMainWindow() {
                 let osReleaseNum = osReleaseArray[2];
                 let slimNotifications;
                 if (osReleaseNum >= 16000) {
-                    // createRemindersWindow();
-                    createNotificationReminder();
+                    createRemindersWindow();
                 } else {
                     createNotificationReminder();
                 }
