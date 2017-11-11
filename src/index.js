@@ -53,7 +53,13 @@ document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
     });
 });
 
-// load data and change settings tab to match current settings
+const appVersion = app.getVersion();
+document.getElementById('appVersion').textContent = 'v ' + appVersion;
+const monitorScreen = screen.getPrimaryDisplay();
+const monitorScreenHeight = monitorScreen.workAreaSize.height;
+if (monitorScreenHeight < 925) {
+    document.body.style.overflowY = "scroll";
+}
 
 SettingsScript.getSetting().then(function (returnedSettings) {
     let hotKey = returnedSettings.hotKey || "F9";
@@ -282,8 +288,17 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     }
 });
 
+document.getElementById("mainOwlIcon").addEventListener("click", function () {
+    ipcRenderer.send('showOwlWindow');
+});
+
+document.getElementById("showAbout").addEventListener("click", function () {
+    ipcRenderer.send('showAboutWindow');
+});
+
 
 ipcRenderer.on('reminderNotify', (event, dailyPunchCountObj) => {
+    console.log(dailyPunchCountObj);
     let dailyPunchCount = dailyPunchCountObj.punchCount;
     let selectedIcon = dailyPunchCountObj.selectedIcon || "owl_ico";
     let selectedIconName = selectedIcon + "_64.png";
@@ -300,23 +315,9 @@ ipcRenderer.on('reminderNotify', (event, dailyPunchCountObj) => {
     }
 });
 
-document.getElementById("mainOwlIcon").addEventListener("click", function () {
-    ipcRenderer.send('showOwlWindow');
-});
-
-document.getElementById("showAbout").addEventListener("click", function () {
-    ipcRenderer.send('showAboutWindow');
-});
-
 ipcRenderer.on('newOwl', (event, owlPicked) => {
     let icon128Path = "../images/" + owlPicked + "_128.png";
     document.getElementById('mainOwlIconImage').src = icon128Path;
 });
 
-const appVersion = app.getVersion();
-document.getElementById('appVersion').textContent = 'v ' + appVersion;
-const monitorScreen = screen.getPrimaryDisplay();
-const monitorScreenHeight = monitorScreen.workAreaSize.height;
-if (monitorScreenHeight < 925) {
-    document.body.style.overflowY = "scroll";
-}
+

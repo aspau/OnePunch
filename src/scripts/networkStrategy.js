@@ -73,7 +73,6 @@ module.exports = {
                                         function (err) {
                                             if (err) {
                                                 SaveLocalLog.saveLocalLog(settingsLogObject).then(function (logObject) {
-                                                    console.log(assumeDisconnected + " assume")
                                                     if (assumeDisconnected) {
                                                         WindowsNotifications.notify("Logged!", "Logged to local file!", selectedIconName, 2000)
                                                         resolve(logObject);

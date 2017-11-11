@@ -18,16 +18,6 @@ const {
 const SettingsScript = require('./scripts/settings_script');
 const Reminders = require('./scripts/reminders');
 const os = require('os');
-const osRelease = os.release();
-const osReleaseArray = osRelease.split(".");
-osReleaseNum = osReleaseArray[2];
-
-if (osReleaseNum >= 16000) {
-    slimNotifications = true;
-} else {
-    slimNotifications = false;
-}
-
 app.preventExit = true;
 
 const appFolder = path.dirname(process.execPath)
@@ -53,8 +43,12 @@ let mainWindow;
 let shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
-        if (mainWindow.isMinimized()) mainWindow.restore();
-        mainWindow.focus();
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+            mainWindow.focus();
+        } else {
+            mainWindow.focus();
+        }
     }
 });
 
@@ -287,12 +281,15 @@ function createMainWindow() {
         {
             label: 'How are we doing today?',
             click: function () {
-                if (slimNotifications) {
-                    createRemindersWindow();
+                let osRelease = os.release();
+                let osReleaseArray = osRelease.split(".");
+                let osReleaseNum = osReleaseArray[2];
+                let slimNotifications;
+                if (osReleaseNum >= 16000) {
+                    // createRemindersWindow();
+                    createNotificationReminder();
                 } else {
-                    SettingsScript.getSetting().then(function (returnedSettings) {
-                        createNotificationReminder(returnedSettings);
-                    });
+                    createNotificationReminder();
                 }
             }
                 },
@@ -395,7 +392,7 @@ function genReminders(returnedSettings) {
     if (reminderType == "popups") {
         createRemindersWindow();
     } else {
-        createNotificationReminder(returnedSettings);
+        createNotificationReminder();
     }
 }
 
@@ -410,11 +407,19 @@ function loopReminders(returnedSettings) {
     }, reminderLagMs);
 };
 
-function createNotificationReminder(returnedSettings) {
-    Reminders.getDailyPunches(returnedSettings).then(function (dailyPunchCountObj) {
-        dailyPunchCountObj.assumeDisconnected = returnedSettings.assumeDisconnected;
-        mainWindow.webContents.send('reminderNotify', dailyPunchCountObj);
-    });
+function createNotificationReminder() {
+    SettingsScript.getSetting()
+        .then(function (returnedSettings) {
+            Reminders.getDailyPunches(returnedSettings).then(function (dailyPunchCountObj) {
+                dailyPunchCountObj.assumeDisconnected = returnedSettings.assumeDisconnected;
+                dailyPunchCountObj.selectedIcon = returnedSettings.selectedIcon;
+                mainWindow.webContents.send('reminderNotify', dailyPunchCountObj);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }).catch(function (error) {
+            console.log(error);
+        });
 }
 
 ipcMain.on('settingsComplete', (event, arg) => {
