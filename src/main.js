@@ -183,7 +183,7 @@ function createOwlChoiceWindow() {
         title: "OnePunch",
         icon: iconpath,
         width: 580,
-        height: 725,
+        height: 750,
         show: false
     });
 
