@@ -374,8 +374,8 @@ app.on('activate', function () {
 
 autoUpdater.on('update-downloaded', () => {
     dialog.showMessageBox({
-        title: 'Install Updates',
-        message: 'Updates downloaded, application will install updates and restart'
+        title: 'OnePunch Updates',
+        message: 'Updates downloaded, OnePunch will install updates and restart'
     }, () => {
         SettingsScript.saveSetting('showUpdateSummary', true).then(function (returnedSettings) {
             app.preventExit = false;
