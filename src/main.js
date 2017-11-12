@@ -371,7 +371,7 @@ app.on('activate', function () {
         createMainWindow();
     }
 });
-// test
+
 autoUpdater.on('update-downloaded', () => {
     dialog.showMessageBox({
         title: 'OnePunch Updates',
