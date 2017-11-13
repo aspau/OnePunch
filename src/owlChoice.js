@@ -3,7 +3,8 @@ const {
 } = require('electron');
 const SettingsScript = require("./scripts/settings_script");
 
-SettingsScript.getSetting("selectedIcon").then(function(selectedIconId){
+SettingsScript.getSetting("selectedIcon").then(function(settingsIconId){
+    var selectedIconId = settingsIconId || "owl_ico";
     var owlIcons = document.querySelectorAll(".owlIcon");
         for (var i = 0; i < owlIcons.length; i++) {
             if (owlIcons[i].id == selectedIconId) {
