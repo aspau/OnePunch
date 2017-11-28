@@ -10,7 +10,7 @@ module.exports = {
         return new Promise(function (resolve, reject) {
             let returnPunchCountObj = {};
             getSharedPunchCount(returnedSettings).then(function (sharedPunchCount) {
-                if (!sharedPunchCount) {
+                if (!sharedPunchCount && sharedPunchCount !== 0) {
                     returnPunchCountObj.sharedPunches = false;
                     if (returnedSettings.localLogs) {
                         let localPunches = returnedSettings.localLogs.length;
