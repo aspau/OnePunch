@@ -378,10 +378,14 @@ app.on('activate', function () {
     }
 });
 
+
 autoUpdater.on('update-downloaded', () => {
     dialog.showMessageBox({
-        title: 'OnePunch Updates',
-        message: 'Updates downloaded, OnePunch will install updates and restart'
+        message: "Updates downloaded, OnePunch will now restart",
+        buttons: ["OK"],
+        type: "info",
+        icon: iconpath,
+        title: "OnePunch Updates"
     }, () => {
         SettingsScript.saveSetting('showUpdateSummary', true).then(function (returnedSettings) {
             app.preventExit = false;
