@@ -534,3 +534,5 @@ ipcMain.on('owlSelected', function (event, selectedOwl) {
     owlChoice.close();
     mainWindow.webContents.send('newOwl', selectedOwl);
 });
+
+app.setAppUserModelId("com.app.onepunch")
