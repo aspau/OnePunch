@@ -39,6 +39,7 @@ const BrowserWindow = electron.BrowserWindow;
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let remindersWindow = null;
 
 let shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
     // Someone tried to run a second instance, we should focus our window.
@@ -210,29 +211,34 @@ function createOwlChoiceWindow() {
 }
 
 function createRemindersWindow() {
-    remindersWindow = new BrowserWindow({
-        width: 350,
-        height: 475,
-        resizable: false,
-        show: true,
-        center: true,
-        maximizable: false,
-        fullscreenable: false,
-        title: "OnePunch",
-        icon: iconpath
-    });
-    remindersWindow.loadURL(url.format({
-        pathname: path.join(__dirname, '/views/reminder.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
-    remindersWindow.once('ready-to-show', () => {
-        remindersWindow.show();
-    })
-    remindersWindow.on('closed', function () {
-        remindersWindow = null
-    });
-    remindersWindow.setMenu(null);
+
+    if (remindersWindow !== null) {
+        remindersWindow.webContents.send('updateCount');
+    } else {
+        remindersWindow = new BrowserWindow({
+            width: 350,
+            height: 475,
+            resizable: false,
+            show: true,
+            center: true,
+            maximizable: false,
+            fullscreenable: false,
+            title: "OnePunch",
+            icon: iconpath
+        });
+        remindersWindow.loadURL(url.format({
+            pathname: path.join(__dirname, '/views/reminder.html'),
+            protocol: 'file:',
+            slashes: true
+        }));
+        remindersWindow.once('ready-to-show', () => {
+            remindersWindow.show();
+        })
+        remindersWindow.on('closed', function () {
+            remindersWindow = null
+        });
+        remindersWindow.setMenu(null);
+    }
 }
 
 function createSettingsWindow() {
@@ -284,8 +290,8 @@ function createMainWindow() {
                 let osRelease = os.release();
                 let osReleaseArray = osRelease.split(".");
                 let osReleaseNum = osReleaseArray[2];
-                let slimNotifications;
-                if (osReleaseNum >= 16000) {
+                let slimNotifications = false;
+                if (osReleaseNum >= 16000 && slimNotifications === true) {
                     createRemindersWindow();
                 } else {
                     createNotificationReminder();
@@ -372,10 +378,14 @@ app.on('activate', function () {
     }
 });
 
+
 autoUpdater.on('update-downloaded', () => {
     dialog.showMessageBox({
-        title: 'OnePunch Updates',
-        message: 'Updates downloaded, OnePunch will install updates and restart'
+        message: "Updates downloaded, OnePunch will now restart",
+        buttons: ["OK"],
+        type: "info",
+        icon: iconpath,
+        title: "OnePunch Updates"
     }, () => {
         SettingsScript.saveSetting('showUpdateSummary', true).then(function (returnedSettings) {
             app.preventExit = false;
@@ -534,3 +544,5 @@ ipcMain.on('owlSelected', function (event, selectedOwl) {
     owlChoice.close();
     mainWindow.webContents.send('newOwl', selectedOwl);
 });
+
+app.setAppUserModelId("com.app.onepunch")

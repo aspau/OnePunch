@@ -2,11 +2,13 @@ const os = require('os');
 const osRelease = os.release();
 const osReleaseArray = osRelease.split(".");
 const osReleaseNum = osReleaseArray[2];
-if (osReleaseNum >= 16000) {
+/*if (osReleaseNum >= 16000) {
     slimNotifications = true;
 } else {
     slimNotifications = false;
-}
+}*/
+
+const slimNotifications = false;
 
 module.exports = {
 
