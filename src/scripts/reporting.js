@@ -5,6 +5,41 @@ const GoogleStrategy = require('./googleStrategy');
 const OfficeStrategy = require('./officeStrategy');
 const WindowsNotifications = require("./windowsNotifications");
 
+
+module.exports = {
+
+    // Basic flow: get the unsorted data, sort it, total it by day and/or hour, save it to a csv file
+    // right now this doesn't overwrite file, so if there's a previously existing report it will just append this info
+
+    generateReport: function (startDate, endDate, showDetailByDesk, showDetailByHour, savePath) {
+        return new Promise(function (resolve, reject) {
+            SettingsScript.getSetting()
+                .then(function (returnedSettings) {
+                    if (returnedSettings.logStrategy === "network") {
+                        return NetworkStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
+                    } else if (returnedSettings.logStrategy === "google") {
+                        return GoogleStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
+                    } else if (returnedSettings.logStrategy === "office") {
+                        return OfficeStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
+                    }
+                }).then(function (unsortedObjectArray) {
+                    return sortLogObjectArray(unsortedObjectArray, showDetailByDesk, showDetailByHour);
+                }).then(function (objectArray) {
+                    return processObjectsToTotals(objectArray, showDetailByDesk, showDetailByHour);
+                }).then(function (totalsArray) {
+                    return writeTotalsToCsv(totalsArray, savePath, showDetailByDesk, showDetailByHour, startDate, endDate);
+                }).then(function (reportingComplete) {
+                    resolve(reportingComplete);
+                }).catch(function (error) {
+                    if (error === "connection error") {
+                        WindowsNotifications.notify("Cannot connect!", "Please connect to network drive", "exclamation_mark_64.png", 3500);
+                    }
+                });
+        });
+    }
+
+}
+
 function sortLogObjectArray(objectArray, showDetailByDesk, showDetailByHour) {
     return new Promise(function (resolve, reject) {
         for (i = 0; i < objectArray.length; i++) {
@@ -25,6 +60,8 @@ function sortLogObjectArray(objectArray, showDetailByDesk, showDetailByHour) {
         }
     });
 }
+
+// not sure if there's a better way to total based on user selection (either by day or hour, and desk or no desk)
 
 function processObjectsToTotals(objectArray, showDetailByDesk, showDetailByHour) {
     return new Promise(function (resolve, reject) {
@@ -177,6 +214,8 @@ function writeTotalsToCsv(totalsArray, savePath, showDetailByDesk, showDetailByH
     });
 }
 
+// sorts by year, month, day, hour, desk. If desk name is longer than 15 characters this won't work
+
 function genSortString(jsDate, deskName, showDetailByDesk, showDetailByHour) {
     let objHour = jsDate.getHours();
     let objDate = jsDate.getDate();
@@ -204,33 +243,4 @@ function genSortString(jsDate, deskName, showDetailByDesk, showDetailByHour) {
     }
 }
 
-module.exports = {
 
-    generateReport: function (startDate, endDate, showDetailByDesk, showDetailByHour, savePath) {
-        return new Promise(function (resolve, reject) {
-            SettingsScript.getSetting()
-                .then(function (returnedSettings) {
-                    if (returnedSettings.logStrategy === "network") {
-                        return NetworkStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
-                    } else if (returnedSettings.logStrategy === "google") {
-                        return GoogleStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
-                    } else if (returnedSettings.logStrategy === "office") {
-                        return OfficeStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
-                    }
-                }).then(function (unsortedObjectArray) {
-                    return sortLogObjectArray(unsortedObjectArray, showDetailByDesk, showDetailByHour);
-                }).then(function (objectArray) {
-                    return processObjectsToTotals(objectArray, showDetailByDesk, showDetailByHour);
-                }).then(function (totalsArray) {
-                    return writeTotalsToCsv(totalsArray, savePath, showDetailByDesk, showDetailByHour, startDate, endDate);
-                }).then(function (reportingComplete) {
-                    resolve(reportingComplete);
-                }).catch(function (error) {
-                    if (error === "connection error") {
-                        WindowsNotifications.notify("Cannot connect!", "Please connect to network drive", "exclamation_mark_64.png", 3500);
-                    }
-                });
-        });
-    }
-
-}

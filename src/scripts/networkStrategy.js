@@ -1,9 +1,20 @@
+// contains functions for writing and getting log data
+// this one is for data stored on shared network drives
+// as of 1.4.1 this is the only one available
+
 const fs = require('fs');
 const WindowsNotifications = require("./windowsNotifications");
 const SaveLocalLog = require("./saveLocalLog");
 const SettingsScript = require('./settings_script');
 
 module.exports = {
+
+    // substantially complicating this is the need to potentially use three different variants of the saved drive folder
+    // drive mapping to get to the same folder is inconsistent (at my workplace) so the app stores all three possibilities and tests them
+    // in an implementation anywhere else I assume this isn't necessary
+    // and the latter two "(if err) --> try a different folder" calls wouldnt be needed in any of these functions
+
+     //whatever is needed to turn the users chosen save location into the info needed for settings file
     getLogLocation: function (folderLocation) {
         return new Promise(function (resolve, reject) {
             let logPath = {};
@@ -28,6 +39,7 @@ module.exports = {
         });
     },
 
+    // actually saves the log
     enterLog: function (settingsLogObject) {
         return new Promise(function (resolve, reject) {
             const logPath = settingsLogObject.logPath.primary;
@@ -99,6 +111,7 @@ module.exports = {
         });
     },
 
+    // returns the number of punches in a given day
     getDailyTotal: function (returnedSettings) {
         return new Promise(function (resolve, reject) {
             const deskName = returnedSettings.deskName;
@@ -179,10 +192,12 @@ module.exports = {
         });
     },
 
+    // returns an unsorted object with all the logs needed for the report as specified by user
     getReportData: function (startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings) {
         return new Promise(function (resolve, reject) {
             const jsStartDate = new Date(startDate);
             const jsEndDate = new Date(endDate);
+            // add a day to the selected date to make the range inclusive
             const offsetMs = jsEndDate.getTime() + (1000 * 60 * 60 * 24);
             jsEndDate.setTime(offsetMs);
             const logPath = returnedSettings.logPath.primary;
@@ -269,6 +284,7 @@ module.exports = {
         });
     },
 
+    // moves all logs saved locally in settings to the shared log location
     moveLocalText: function (returnedSettings) {
         return new Promise(function (resolve, reject) {
             const logPath = returnedSettings.logPath.primary;

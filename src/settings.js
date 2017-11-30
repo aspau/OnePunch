@@ -34,8 +34,6 @@ document.getElementById("officePicker").addEventListener("click", function () {
     //do whatever is needed to switch to using office
 });
 
-assumeDisconnectedCheck
-
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
     let deskName = deskNameEntry.trim();

@@ -34,7 +34,7 @@ function setHotKey(hotKey) {
     });
 }
 
-// hide all but home tab
+// add tab elements, hide all but home tab
 
 document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
     tabCtrl.addEventListener("click", function () {
@@ -56,12 +56,17 @@ document.querySelectorAll(".tabControl").forEach(function (tabCtrl) {
 const appVersion = app.getVersion();
 document.getElementById('appVersion').textContent = 'v ' + appVersion;
 const monitorScreen = screen.getPrimaryDisplay();
+
+// add vertical scroll bars for small screens
 const monitorScreenHeight = monitorScreen.workAreaSize.height;
 if (monitorScreenHeight < 925) {
     document.body.style.overflowY = "scroll";
 }
 
+// load all settings, fill out the settings tab with those values, set the hotkey, and move any local logs
 SettingsScript.getSetting().then(function (returnedSettings) {
+
+    // load all the settings
     let hotKey = returnedSettings.hotKey || "F9";
     let deskName = returnedSettings.deskName || "Desk";
     let reminders = returnedSettings.reminders || false;
@@ -70,8 +75,9 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     let selectedIcon = returnedSettings.selectedIcon || "owl_ico";
     let selectedIconName = selectedIcon + "_64.png";
     let icon128Path = "../images/" + selectedIcon + "_128.png";
+
+    // fill out the settings tab with those settings
     document.getElementById('mainOwlIconImage').src = icon128Path;
-    setHotKey(hotKey);
     document.getElementById("deskPicker").value = deskName;
     document.querySelectorAll('input[name="hotKey"]').forEach(function (radioBtn) {
         if (radioBtn.value === hotKey) {
@@ -90,6 +96,11 @@ SettingsScript.getSetting().then(function (returnedSettings) {
     document.getElementById("logPath").value = logPathValue;
     document.getElementById("logStrategy").value = logStrategy;
     document.getElementById('logFolderName').textContent = logPath;
+
+    // set the hotkey
+    setHotKey(hotKey);
+
+    // move any local logs
     MoveLocalText.moveText().then(function (logsMovedObj) {
         let logsMoved = logsMovedObj.logsMoved;
         if (logsMoved !== false) {
@@ -106,6 +117,7 @@ SettingsScript.getSetting().then(function (returnedSettings) {
 document.getElementById("logBtn").addEventListener("click", function () {
     LogText.logText();
 });
+
 document.getElementById("checkTotalsBtn").addEventListener("click", function () {
     ipcRenderer.send('getCurrentCount');
 });
@@ -207,8 +219,6 @@ var endPicker = new Pikaday({
     }
 });
 
-// add listeners to page elements
-
 
 // -- change auth flow stuff starts here with the functionality of new buttons
 
@@ -220,6 +230,7 @@ document.getElementById("networkPicker").addEventListener("click", function () {
     });
 });
 
+// These next two elements are hidden and do nothing until cloud support is added
 document.getElementById("googlePicker").addEventListener("click", function () {
     //do whatever is needed to switch to using google
 });
@@ -228,6 +239,9 @@ document.getElementById("officePicker").addEventListener("click", function () {
     //do whatever is needed to switch to using office
 });
 
+// -- change auth flow stuff ends here
+
+
 document.getElementById("savePicker").addEventListener("click", function () {
     FileDialog.getFolder().then(function (chosenDir) {
         document.getElementById('saveFolderName').textContent = chosenDir;
@@ -235,6 +249,7 @@ document.getElementById("savePicker").addEventListener("click", function () {
     });
 });
 
+// saves settings. Remember to deregister current hotkey before assigning a new one
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
     let deskName = deskNameEntry.trim();
@@ -288,13 +303,16 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     }
 });
 
+// ask the main process to open the owl picking window
 document.getElementById("mainOwlIcon").addEventListener("click", function () {
     ipcRenderer.send('showOwlWindow');
 });
 
+// ask the main process to open the about window
 document.getElementById("showAbout").addEventListener("click", function () {
     ipcRenderer.send('showAboutWindow');
 });
+
 
 
 ipcRenderer.on('reminderNotify', (event, dailyPunchCountObj) => {
@@ -315,6 +333,7 @@ ipcRenderer.on('reminderNotify', (event, dailyPunchCountObj) => {
     }
 });
 
+// change the main icon after user selects a new image
 ipcRenderer.on('newOwl', (event, owlPicked) => {
     let icon128Path = "../images/" + owlPicked + "_128.png";
     document.getElementById('mainOwlIconImage').src = icon128Path;

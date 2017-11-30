@@ -1,5 +1,7 @@
 const SettingsScript = require('./settings_script');
 
+// when there's no connection logs are saved as an array of objects in the app settings
+
 module.exports = {
     saveLocalLog: function (settingsLogObject) {
         return new Promise(function (resolve, reject) {

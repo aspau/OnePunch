@@ -6,6 +6,11 @@ const OfficeStrategy = require('./officeStrategy');
 
 module.exports = {
 
+    // called to move locally stored logs from settings to log files
+    // those functions are in the individual strategy files
+    // dependent on user settings
+    // as of 1.4.1 only shared drive logging is available
+
     moveText: function () {
         return new Promise(function (resolve, reject) {
             SettingsScript.getSetting()

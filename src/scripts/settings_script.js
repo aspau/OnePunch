@@ -1,5 +1,9 @@
 const settings = require('electron-settings');
 
+// Originally there was a different save method but now these are essentially just using the electron-settings functions
+// I've left them here in case there's a future change -- although the inneficiency of calling a function that
+// essentially just calls another function might suggest a change
+
 module.exports = {
     getSetting: function (settingsKey) {
         return new Promise(function (resolve, reject) {

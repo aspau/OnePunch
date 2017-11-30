@@ -1,3 +1,5 @@
+// much of this code comes from electron-toaster and was modified to include custome icons
+
 const ipc = require('electron').ipcRenderer;
 
 function getQueryVariable(variable) {

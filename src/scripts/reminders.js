@@ -6,10 +6,13 @@ const SettingsScript = require('./settings_script');
 
 module.exports = {
 
+    // this pulls daily punch counts for the reminders. it combines shared file with local count
+
     getDailyPunches: function (returnedSettings) {
         return new Promise(function (resolve, reject) {
             let returnPunchCountObj = {};
             getSharedPunchCount(returnedSettings).then(function (sharedPunchCount) {
+                // if the shared file can't be accessed
                 if (!sharedPunchCount && sharedPunchCount !== 0) {
                     returnPunchCountObj.sharedPunches = false;
                     if (returnedSettings.localLogs) {
@@ -38,6 +41,10 @@ module.exports = {
         });
     }
 }
+
+// called to get the shared daily punch count
+// dependent on user settings
+// as of 1.4.1 only shared drive logging is available
 
 function getSharedPunchCount(returnedSettings) {
     return new Promise(function (resolve, reject) {

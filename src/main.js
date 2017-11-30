@@ -61,7 +61,9 @@ if (shouldQuit) {
 
 function createSplashScreen() {
     let splashScreen;
-    // Create the browser window.
+
+    // window with logo that opens at launch
+
     splashScreen = new BrowserWindow({
         width: 300,
         height: 300,
@@ -75,7 +77,7 @@ function createSplashScreen() {
         show: false
     });
 
-    // and load the html of the app.
+
     splashScreen.loadURL(url.format({
         pathname: path.join(__dirname, '/views/splash.html'),
         protocol: 'file:',
@@ -89,18 +91,19 @@ function createSplashScreen() {
         }, 1500);
     });
 
-    // Emitted when the window is closed.
+
     splashScreen.on('closed', function () {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
+
         splashScreen = null
     });
 }
 
 function createUpdateSummaryWindow() {
+
+    // window that opens after an update is installed to alert user to changes
+
     let updateSummary;
-    // Create the browser window.
+
     updateSummary = new BrowserWindow({
         width: 350,
         useContentSize: true,
@@ -125,11 +128,9 @@ function createUpdateSummaryWindow() {
         SettingsScript.saveSetting('showUpdateSummary', false);
     });
 
-    // Emitted when the window is closed.
+
     updateSummary.on('closed', function () {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
+
         updateSummary = null
     });
 
@@ -138,7 +139,7 @@ function createUpdateSummaryWindow() {
 
 function createAboutWindow() {
     let aboutWindow;
-    // Create the browser window.
+
     aboutWindow = new BrowserWindow({
         width: 350,
         useContentSize: true,
@@ -151,7 +152,7 @@ function createAboutWindow() {
         show: false
     });
 
-    // and load the html of the app.
+
     aboutWindow.loadURL(url.format({
         pathname: path.join(__dirname, '/views/about.html'),
         protocol: 'file:',
@@ -162,11 +163,8 @@ function createAboutWindow() {
         aboutWindow.show();
     });
 
-    // Emitted when the window is closed.
     aboutWindow.on('closed', function () {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
+
         aboutWindow = null
     });
 
@@ -174,7 +172,9 @@ function createAboutWindow() {
 }
 
 function createOwlChoiceWindow() {
-    // Create the browser window.
+
+    // window for picking a new owlvatar
+
     owlChoice = new BrowserWindow({
         useContentSize: true,
         resizable: false,
@@ -188,7 +188,6 @@ function createOwlChoiceWindow() {
         show: false
     });
 
-    // and load the html of the app.
     owlChoice.loadURL(url.format({
         pathname: path.join(__dirname, '/views/owlChoice.html'),
         protocol: 'file:',
@@ -199,11 +198,8 @@ function createOwlChoiceWindow() {
         owlChoice.show();
     });
 
-    // Emitted when the window is closed.
     owlChoice.on('closed', function () {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
+
         updateSummary = null
     });
 
@@ -211,6 +207,9 @@ function createOwlChoiceWindow() {
 }
 
 function createRemindersWindow() {
+
+    // pop-up reminder window
+    // called either by reminder timeout function or when user clicks button in main window
 
     if (remindersWindow !== null) {
         remindersWindow.webContents.send('updateCount');
@@ -242,6 +241,9 @@ function createRemindersWindow() {
 }
 
 function createSettingsWindow() {
+
+    // window for choosing settings at first launch
+
     settingsWindow = new BrowserWindow({
         width: 350,
         height: 925,
@@ -287,6 +289,11 @@ function createMainWindow() {
         {
             label: 'How are we doing today?',
             click: function () {
+
+                // This allows for an alternate style of non native notifications
+                //it was briefly needed after a windows updated prevented native notifications
+                //It's being left in to guard against a similar problem in the future
+
                 let osRelease = os.release();
                 let osReleaseArray = osRelease.split(".");
                 let osReleaseNum = osReleaseArray[2];
@@ -326,6 +333,9 @@ function createMainWindow() {
     });
     appIcon.setContextMenu(contextMenu);
 
+    // when the window is closed it minimizes to the taskbar
+    //It will close on an explicit Quit command from the context menu
+
     mainWindow.on('close', (event) => {
         if (app.preventExit) {
             event.preventDefault() // Prevents the window from closing
@@ -344,6 +354,13 @@ function createMainWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
+
+    // on ready events:
+        // get the settings
+        // set up the timeout loop for notifcations
+        // launch the splash screen and main window
+        // check for updates
+
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
             if (returnedSettings.reminders == "notifications" || returnedSettings.reminders == "popups") {
@@ -378,6 +395,7 @@ app.on('activate', function () {
     }
 });
 
+// when updates are downloaded they force an automatic restart at launch
 
 autoUpdater.on('update-downloaded', () => {
     dialog.showMessageBox({
@@ -406,6 +424,8 @@ function genReminders(returnedSettings) {
 }
 
 function loopReminders(returnedSettings) {
+    // the regular reminder interval is between 40 and 80 minutes
+    // the commented interval between 10 and 20 seconds is left in for testing
     let reminderLagMinutes = Math.floor(Math.random() * (80 - 40 + 1) + 40);
     let reminderLagMs = 1000 * 60 * reminderLagMinutes;
     //let reminderLagMinutes = Math.floor(Math.random() * (20 - 10 + 1) + 10);
@@ -416,6 +436,7 @@ function loopReminders(returnedSettings) {
     }, reminderLagMs);
 };
 
+// notification reminders are managed from the main process
 function createNotificationReminder() {
     SettingsScript.getSetting()
         .then(function (returnedSettings) {
@@ -431,6 +452,8 @@ function createNotificationReminder() {
         });
 }
 
+
+// after initial settings are loaded the app runs through the same events as a regular startup
 ipcMain.on('settingsComplete', (event, arg) => {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
@@ -450,6 +473,8 @@ ipcMain.on('settingsComplete', (event, arg) => {
     });
 });
 
+// when the notification settings are changed, eliminate the prior timeout before setting a new one
+
 ipcMain.on('remindersChanged', () => {
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (typeof remindersTimeout !== 'undefined') {
@@ -462,11 +487,36 @@ ipcMain.on('remindersChanged', () => {
     });
 });
 
+
+// message from main window when user asks for current count total
 ipcMain.on('getCurrentCount', (event) => {
     createRemindersWindow();
 });
 
+// message from notifcation process when using non-native notifications
+ipcMain.on('electron-toaster-message', function (event, msg) {
+    showToaster(msg);
+});
 
+// message from main window when changing owl-vatar
+ipcMain.on('showOwlWindow', function (event) {
+    createOwlChoiceWindow();
+});
+
+
+ipcMain.on('showAboutWindow', function (event) {
+    createAboutWindow();
+});
+
+// after a new owl is picked message comes here to close the window
+// and then goes back to the main window to change the image
+ipcMain.on('owlSelected', function (event, selectedOwl) {
+    owlChoice.close();
+    mainWindow.webContents.send('newOwl', selectedOwl);
+});
+
+// this is the function for creating a non-native notification window
+// it's largely borrowed from electron-toaster package
 var showToaster = function (msg) {
     var self = this;
     this.window = new BrowserWindow({
@@ -528,21 +578,9 @@ var showToaster = function (msg) {
     });
 };
 
-ipcMain.on('electron-toaster-message', function (event, msg) {
-    showToaster(msg);
-});
 
-ipcMain.on('showOwlWindow', function (event) {
-    createOwlChoiceWindow();
-});
-
-ipcMain.on('showAboutWindow', function (event) {
-    createAboutWindow();
-});
-
-ipcMain.on('owlSelected', function (event, selectedOwl) {
-    owlChoice.close();
-    mainWindow.webContents.send('newOwl', selectedOwl);
-});
-
+// windows versions > 16000 require the app to explicitly declare the model id
+// it must match the one in package.json
+// without this you can't register native notifications
 app.setAppUserModelId("com.app.onepunch")
+

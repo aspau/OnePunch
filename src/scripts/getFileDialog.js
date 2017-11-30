@@ -2,6 +2,9 @@ const {
     dialog
 } = require('electron').remote
 
+// opens a folder picker. Returns the chosen folder
+// note that this is for picking folders and not files
+
 module.exports = {
     getFolder: function () {
         return new Promise(function (resolve, reject) {
