@@ -1,6 +1,7 @@
 const NetworkStrategy = require('./networkStrategy');
 const GoogleStrategy = require('./googleStrategy');
 const OfficeStrategy = require('./officeStrategy');
+const CloudStrategy = require('./cloudStrategy');
 const SettingsScript = require('./settings_script');
 
 
@@ -58,6 +59,10 @@ function getSharedPunchCount(returnedSettings) {
             });
         } else if (returnedSettings.logStrategy === "office") {
             OfficeStrategy.getDailyTotal(returnedSettings).then(function (sharedPunchCount) {
+                resolve(sharedPunchCount);
+            });
+        } else if (returnedSettings.logStrategy === "cloud") {
+            CloudStrategy.getDailyTotal(returnedSettings).then(function (sharedPunchCount) {
                 resolve(sharedPunchCount);
             });
         }

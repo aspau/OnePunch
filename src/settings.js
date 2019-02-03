@@ -34,6 +34,10 @@ document.getElementById("officePicker").addEventListener("click", function () {
     //do whatever is needed to switch to using office
 });
 
+document.getElementById("cloudPicker").addEventListener("click", function () {
+    //do whatever is needed to switch to using cloud
+});
+
 document.getElementById("saveBtn").addEventListener("click", function () {
     let deskNameEntry = document.getElementById("deskPicker").value;
     let deskName = deskNameEntry.trim();

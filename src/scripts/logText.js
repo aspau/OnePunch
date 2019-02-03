@@ -2,6 +2,7 @@ const SettingsScript = require('./settings_script');
 const NetworkStrategy = require('./networkStrategy');
 const GoogleStrategy = require('./googleStrategy');
 const OfficeStrategy = require('./officeStrategy');
+const CloudStrategy = require('./cloudStrategy');
 
 // the logObject has a weekday, month, date (00 - 31), year, hour (00 - 23), minute (00 - 60), and desk name
 // It's returned as an object attached to the settings object to make the settings available down the promise chain
@@ -65,6 +66,8 @@ module.exports = {
                         return GoogleStrategy.enterLog(settingsLogObject);
                     } else if (settingsLogObject.logStrategy === "office") {
                         return OfficeStrategy.enterLog(settingsLogObject);
+                    } else if (settingsLogObject.logStrategy === "cloud") {
+                        return CloudStrategy.enterLog(settingsLogObject);
                     }
                 }).then(function (logObject) {
                     resolve(logObject);

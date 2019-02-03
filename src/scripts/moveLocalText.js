@@ -2,6 +2,7 @@ const SettingsScript = require('./settings_script');
 const NetworkStrategy = require('./networkStrategy');
 const GoogleStrategy = require('./googleStrategy');
 const OfficeStrategy = require('./officeStrategy');
+const CloudStrategy = require('./cloudStrategy');
 
 
 module.exports = {
@@ -23,6 +24,8 @@ module.exports = {
                             return GoogleStrategy.moveLocalText(returnedSettings);
                         } else if (returnedSettings.logStrategy === "office") {
                             return OfficeStrategy.moveLocalText(returnedSettings);
+                        } else if (returnedSettings.logStrategy === "cloud") {
+                            return CloudStrategy.moveLocalText(returnedSettings);
                         }
                     } else {
                         return 0;

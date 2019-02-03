@@ -3,6 +3,7 @@ const SettingsScript = require('./settings_script');
 const NetworkStrategy = require('./networkStrategy');
 const GoogleStrategy = require('./googleStrategy');
 const OfficeStrategy = require('./officeStrategy');
+const CloudStrategy = require('./cloudStrategy');
 const WindowsNotifications = require("./windowsNotifications");
 
 
@@ -21,6 +22,8 @@ module.exports = {
                         return GoogleStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
                     } else if (returnedSettings.logStrategy === "office") {
                         return OfficeStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
+                    } else if (returnedSettings.logStrategy === "cloud") {
+                        return CloudStrategy.getReportData(startDate, endDate, showDetailByDesk, showDetailByHour, returnedSettings);
                     }
                 }).then(function (unsortedObjectArray) {
                     return sortLogObjectArray(unsortedObjectArray, showDetailByDesk, showDetailByHour);

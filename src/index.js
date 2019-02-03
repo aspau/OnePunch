@@ -9,6 +9,7 @@ const WindowsNotifications = require("./scripts/windowsNotifications");
 const NetworkStrategy = require('./scripts/networkStrategy');
 const GoogleStrategy = require('./scripts/googleStrategy');
 const OfficeStrategy = require('./scripts/officeStrategy');
+const CloudStrategy = require('./scripts/cloudStrategy');
 
 const {
     globalShortcut,
@@ -230,12 +231,16 @@ document.getElementById("networkPicker").addEventListener("click", function () {
     });
 });
 
-// These next two elements are hidden and do nothing until cloud support is added
+// These next three elements are hidden and do nothing until cloud support is added
 document.getElementById("googlePicker").addEventListener("click", function () {
     //do whatever is needed to switch to using google
 });
 
 document.getElementById("officePicker").addEventListener("click", function () {
+    //do whatever is needed to switch to using office
+});
+
+document.getElementById("cloudPicker").addEventListener("click", function () {
     //do whatever is needed to switch to using office
 });
 

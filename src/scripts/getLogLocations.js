@@ -2,6 +2,7 @@ const SettingsScript = require('./settings_script');
 const NetworkStrategy = require('./networkStrategy');
 const GoogleStrategy = require('./googleStrategy');
 const OfficeStrategy = require('./officeStrategy');
+const CloudStrategy = require('./cloudStrategy');
 
 
 module.exports = {
@@ -22,6 +23,10 @@ module.exports = {
                 });
             } else if (logStrategy === "office") {
                 OfficeStrategy.getLogLocation(chosenDir).then(function (logPath) {
+                    resolve(logPath);
+                });
+            } else if (logStrategy === "cloud") {
+                CloudStrategy.getLogLocation(chosenDir).then(function (logPath) {
                     resolve(logPath);
                 });
             }
