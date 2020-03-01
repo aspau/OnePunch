@@ -32,7 +32,6 @@ module.exports = {
             };
             ipc.send('electron-toaster-message', msg);
         } else {
-
             const options = {
                 icon: iconPath,
                 body: notificationText

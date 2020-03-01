@@ -14,13 +14,13 @@ const CloudStrategy = require('./scripts/cloudStrategy');
 const {
     globalShortcut,
     dialog,
-    app
+    app,
+    screen
 } = require('electron').remote;
 
 const {
     ipcRenderer,
-    remote,
-    screen
+    remote
 } = require('electron');
 var main = remote.require("./main.js");
 const path = require('path');
@@ -321,7 +321,6 @@ document.getElementById("showAbout").addEventListener("click", function () {
 
 
 ipcRenderer.on('reminderNotify', (event, dailyPunchCountObj) => {
-    console.log(dailyPunchCountObj);
     let dailyPunchCount = dailyPunchCountObj.punchCount;
     let selectedIcon = dailyPunchCountObj.selectedIcon || "owl_ico";
     let selectedIconName = selectedIcon + "_64.png";

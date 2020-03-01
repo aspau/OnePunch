@@ -8,8 +8,10 @@ const {
     Menu,
     globalShortcut,
     fs,
-    ipcMain
+    ipcMain,
+    Notification
 } = require('electron');
+
 const url = require('url');
 const path = require('path');
 const {
@@ -26,9 +28,9 @@ const exeName = path.basename(process.execPath)
 app.setLoginItemSettings({
     openAtLogin: true,
     args: [
-    '--processStart', `"${exeName}"`,
-    '--process-start-args', `"--hidden"`
-  ]
+        '--processStart', `"${exeName}"`,
+        '--process-start-args', `"--hidden"`
+    ]
 })
 
 // Module to create native browser window.
@@ -40,23 +42,32 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let remindersWindow = null;
+let tray = null;
 
-let shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow) {
-        if (mainWindow.isMinimized()) {
-            mainWindow.restore();
-            mainWindow.focus();
-        } else {
-            mainWindow.focus();
+
+
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+    app.quit()
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        // Someone tried to run a second instance, we should focus our window.
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) {
+                mainWindow.restore();
+                mainWindow.focus();
+            } else {
+                mainWindow.focus();
+            }
         }
-    }
-});
-
-if (shouldQuit) {
-    app.quit();
-    return;
+    })
 }
+
+
+
+
 
 
 function createSplashScreen() {
@@ -74,7 +85,10 @@ function createSplashScreen() {
         fullscreenable: false,
         title: "OnePunch",
         icon: iconpath,
-        show: false
+        show: false,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
 
 
@@ -113,7 +127,10 @@ function createUpdateSummaryWindow() {
         fullscreenable: false,
         title: "OnePunch",
         icon: iconpath,
-        show: false
+        show: false,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
 
     // and load the html of the app.
@@ -149,7 +166,10 @@ function createAboutWindow() {
         fullscreenable: false,
         title: "OnePunch",
         icon: iconpath,
-        show: false
+        show: false,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
 
 
@@ -185,7 +205,10 @@ function createOwlChoiceWindow() {
         icon: iconpath,
         width: 580,
         height: 750,
-        show: false
+        show: false,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
 
     owlChoice.loadURL(url.format({
@@ -223,7 +246,10 @@ function createRemindersWindow() {
             maximizable: false,
             fullscreenable: false,
             title: "OnePunch",
-            icon: iconpath
+            icon: iconpath,
+            webPreferences: {
+                nodeIntegration: true
+            }
         });
         remindersWindow.loadURL(url.format({
             pathname: path.join(__dirname, '/views/reminder.html'),
@@ -253,7 +279,10 @@ function createSettingsWindow() {
         maximizable: false,
         fullscreenable: false,
         title: "OnePunch",
-        icon: iconpath
+        icon: iconpath,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
     settingsWindow.loadURL(url.format({
         pathname: path.join(__dirname, '/views/settings.html'),
@@ -270,76 +299,31 @@ function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 350,
         height: 875,
-        resizable: false,
+        resizable: true,
         show: false,
         center: true,
-        maximizable: false,
-        fullscreenable: false,
+        maximizable: true,
+        fullscreenable: true,
         title: "OnePunch",
-        icon: iconpath
+        icon: iconpath,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
-    mainWindow.hide();
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, '/views/index.html'),
         protocol: 'file:',
         slashes: true
     }));
-    const appIcon = new Tray(iconpath);
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'How are we doing today?',
-            click: function () {
 
-                // This allows for an alternate style of non native notifications
-                //it was briefly needed after a windows updated prevented native notifications
-                //It's being left in to guard against a similar problem in the future
-
-                let osRelease = os.release();
-                let osReleaseArray = osRelease.split(".");
-                let osReleaseNum = osReleaseArray[2];
-                let slimNotifications = false;
-                if (osReleaseNum >= 16000 && slimNotifications === true) {
-                    createRemindersWindow();
-                } else {
-                    createNotificationReminder();
-                }
-            }
-                },
-        {
-            label: 'Open OnePunch',
-            click: function () {
-                mainWindow.show();
-            }
-                },
-        {
-            label: 'Quit',
-            click: function () {
-                app.isQuiting = true;
-                app.preventExit = false;
-                app.quit();
-
-            }
-                }
-            ]);
     mainWindow.on('minimize', function (event) {
         event.preventDefault()
         mainWindow.hide();
     });
-    mainWindow.on('show', function () {
-        appIcon.setHighlightMode('always')
-    });
-    appIcon.on('click', function () {
-        mainWindow.show();
-    });
-    appIcon.setContextMenu(contextMenu);
-
-    // when the window is closed it minimizes to the taskbar
-    //It will close on an explicit Quit command from the context menu
 
     mainWindow.on('close', (event) => {
         if (app.preventExit) {
             event.preventDefault() // Prevents the window from closing
-            event.preventDefault();
             mainWindow.hide();
         }
     });
@@ -356,11 +340,10 @@ function createMainWindow() {
 app.on('ready', function () {
 
     // on ready events:
-        // get the settings
-        // set up the timeout loop for notifcations
-        // launch the splash screen and main window
-        // check for updates
-
+    // get the settings
+    // set up the timeout loop for notifcations
+    // launch the splash screen and main window
+    // check for updates
     SettingsScript.getSetting().then(function (returnedSettings) {
         if (returnedSettings.initialized) {
             if (returnedSettings.reminders == "notifications" || returnedSettings.reminders == "popups") {
@@ -368,7 +351,51 @@ app.on('ready', function () {
             }
             createSplashScreen();
             createMainWindow()
-            autoUpdater.checkForUpdates();
+            // autoUpdater.checkForUpdates();
+
+            tray = new Tray(iconpath)
+            const contextMenu = Menu.buildFromTemplate([{
+                    label: 'How are we doing today?',
+                    click: function () {
+                        // This allows for an alternate style of non native notifications
+                        //it was briefly needed after a windows updated prevented native notifications
+                        //It's being left in to guard against a similar problem in the future
+                        let osRelease = os.release();
+                        let osReleaseArray = osRelease.split(".");
+                        let osReleaseNum = osReleaseArray[2];
+                        let slimNotifications = false;
+                        if (osReleaseNum >= 16000 && slimNotifications === true) {
+                            createRemindersWindow();
+                        } else {
+                            createNotificationReminder();
+                        }
+                    }
+                },
+                {
+                    label: 'Open OnePunch',
+                    click: function () {
+                        mainWindow.show();
+                    }
+                },
+                {
+                    label: 'Quit',
+                    click: function () {
+                        app.isQuiting = true;
+                        app.preventExit = false;
+                        app.quit();
+
+                    }
+                }
+            ]);
+
+            tray.setToolTip('This is my application.')
+            tray.setContextMenu(contextMenu)
+
+            tray.on('click', function () {
+                mainWindow.show();
+            });
+
+
             if (returnedSettings.showUpdateSummary) {
                 createUpdateSummaryWindow();
             }
@@ -528,7 +555,10 @@ var showToaster = function (msg) {
         "always-on-top": true,
         title: "OnePunch",
         icon: iconpath,
-        alwaysOnTop: true
+        alwaysOnTop: true,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
     var timer, height, width;
     var screen = electron.screen;
@@ -584,3 +614,4 @@ var showToaster = function (msg) {
 // without this you can't register native notifications
 app.setAppUserModelId("com.app.onepunch")
 
+// app.setAppUserModelId(process.execPath)

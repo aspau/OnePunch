@@ -5,11 +5,11 @@ const FileDialog = require("./scripts/getFileDialog");
 
 const {
     ipcRenderer,
-    remote,
-    screen
+    remote
 } = require('electron');
 const {
-    dialog
+    dialog,
+    screen
 } = require('electron').remote
 var main = remote.require("./main.js");
 const path = require('path');
